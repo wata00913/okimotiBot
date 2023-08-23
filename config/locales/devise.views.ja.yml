@@ -42,13 +42,6 @@ ja:
         we_need_your_current_password_to_confirm_your_changes: 変更を反映するには現在のパスワードを入力してください
       new:
         sign_up: ユーザー登録
-      signed_up: ユーザー登録に成功しました。
-      signed_up_but_inactive: ログインするためには、アカウントを有効化してください。
-      signed_up_but_locked: アカウントがロックされているためログインできません。
-      signed_up_but_unconfirmed: 本人確認用のメールを送信しました。メール内のリンクからアカウントを有効化させてください。
-      update_needs_confirmation: アカウント情報を変更しました。変更されたメールアドレスの本人確認のため、本人確認用メールより確認処理をおこなってください。
-      updated: アカウント情報を変更しました。
-      updated_but_not_signed_in: あなたのアカウントは正常に更新されましたが、パスワードが変更されたため、再度ログインしてください。
     shared:
       links:
         back: 戻る
@@ -60,6 +53,15 @@ ja:
         sign_up: アカウント登録
       minimum_password_length: "（%{count}字以上）"
   devise:
+    registrations:
+      signed_up: ユーザー登録に成功しました。
+      signed_up: ユーザー登録に成功しました。
+      signed_up_but_inactive: ログインするためには、アカウントを有効化してください。
+      signed_up_but_locked: アカウントがロックされているためログインできません。
+      signed_up_but_unconfirmed: 本人確認用のメールを送信しました。メール内のリンクからアカウントを有効化させてください。
+      update_needs_confirmation: アカウント情報を変更しました。変更されたメールアドレスの本人確認のため、本人確認用メールより確認処理をおこなってください。
+      updated: アカウント情報を変更しました。
+      updated_but_not_signed_in: あなたのアカウントは正常に更新されましたが、パスワードが変更されたため、再度ログインしてください。
     confirmations:
       confirmed: メールアドレスが確認できました。
       new:
