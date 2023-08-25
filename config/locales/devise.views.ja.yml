@@ -42,6 +42,7 @@ ja:
         we_need_your_current_password_to_confirm_your_changes: 変更を反映するには現在のパスワードを入力してください
       new:
         sign_up: ユーザー登録
+        submit: 登録する
     shared:
       links:
         back: 戻る
