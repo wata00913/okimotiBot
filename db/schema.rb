@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_25_021011) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_25_025508) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "slack_accounts", force: :cascade do |t|
+    t.string "account_id", null: false
+    t.string "name", null: false
+    t.text "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_slack_accounts_on_account_id", unique: true
+  end
 
   create_table "slack_channels", force: :cascade do |t|
     t.string "channel_id", null: false
