@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get 'welcome/index'
-  root to: 'welcome#index'
-  devise_for :users, only: :registrations
+  get 'messages', to: 'messages#index'
+  root to: 'messages#index'
+  devise_for :users, only: %i[registrations sessions]
 end

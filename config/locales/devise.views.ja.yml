@@ -43,6 +43,10 @@ ja:
       new:
         sign_up: ユーザー登録
         submit: 登録する
+    sessions:
+      new:
+        sign_in: ログイン
+        submit: ログイン
     shared:
       links:
         back: 戻る
@@ -50,8 +54,9 @@ ja:
         didn_t_receive_unlock_instructions: アカウントのロック解除方法のメールを受け取っていませんか？
         forgot_your_password: パスワードを忘れましたか？
         sign_in: ログイン
+        sign_out: ログアウト
         sign_in_with_provider: "%{provider}でログイン"
-        sign_up: アカウント登録
+        sign_up: ユーザー登録はこちら
       minimum_password_length: "（%{count}字以上）"
   devise:
     registrations:
