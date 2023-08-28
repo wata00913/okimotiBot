@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_28_015828) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_28_032332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,6 +37,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_015828) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "channel_member_id"], name: "index_observed_members_on_user_id_and_channel_member_id", unique: true
+  end
+
+  create_table "sentiment_scores", force: :cascade do |t|
+    t.bigint "message_id", null: false
+    t.float "positive", null: false
+    t.float "negative", null: false
+    t.float "neutral", null: false
+    t.float "mixed", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id"], name: "index_sentiment_scores_on_message_id"
   end
 
   create_table "slack_accounts", force: :cascade do |t|
@@ -75,4 +86,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_015828) do
   add_foreign_key "messages", "channel_members"
   add_foreign_key "observed_members", "channel_members"
   add_foreign_key "observed_members", "users"
+  add_foreign_key "sentiment_scores", "messages"
 end
