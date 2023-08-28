@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_28_012438) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_28_015828) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,6 +20,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_012438) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slack_channel_id", "slack_account_id"], name: "index_channel_members_on_slack_channel_id_and_slack_account_id", unique: true
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "channel_member_id", null: false
+    t.decimal "slack_timestamp", precision: 16, scale: 6, null: false
+    t.text "original_message", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_member_id"], name: "index_messages_on_channel_member_id"
   end
 
   create_table "observed_members", force: :cascade do |t|
@@ -63,6 +72,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_012438) do
 
   add_foreign_key "channel_members", "slack_accounts"
   add_foreign_key "channel_members", "slack_channels"
+  add_foreign_key "messages", "channel_members"
   add_foreign_key "observed_members", "channel_members"
   add_foreign_key "observed_members", "users"
 end
