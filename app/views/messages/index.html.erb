@@ -5,8 +5,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <%= render partial: 'message', collection: @messages %>
     </div>
-    <%= paginate @messages %>
+    <div class="flex justify-center my-8">
+      <%= paginate @messages %>
+    </div>
   </div>
 </div>
 
-<%= link_to t('users.shared.links.sign_out'), destroy_user_session_path, data: { turbo_method: :delete }, class: 'text-blue-500 hover:underline' %>
+<div class="mt-7">
+  <%= link_to t('users.shared.links.sign_out'), destroy_user_session_path, data: { turbo_method: :delete }, class: 'text-blue-500 hover:underline' %>
+</div>
