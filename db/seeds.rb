@@ -31,11 +31,14 @@ tanaka_minute_report_channel.accounts << tanaka
 
 alice.channel_members << wata_minute_report_channel.channel_members
 
+attrs = 50.times.map do |i|
+  { slack_timestamp: (Date.yesterday.midnight - i.hour).to_f, original_message: "#{50 - i}番目のメッセージです。" }
+end
 alice.channel_members.first.messages.create(
   [
     { slack_timestamp: Time.zone.now.to_f, original_message: 'タスクに着手します。' },
     { slack_timestamp: Date.yesterday.midnight.to_f, original_message: 'タスクが終わりませんでした。' }
-  ]
+  ].concat(attrs)
 )
 alice.channel_members.second.messages.create(
   [
