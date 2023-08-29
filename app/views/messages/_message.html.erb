@@ -1,0 +1,27 @@
+<div class="grid grid-cols-2 bg-white p-4 rounded-lg shadow-md">
+  <div>
+    <div class="flex items-center mb-2">
+
+      <% image_url = message.channel_member.slack_account.image_url %>
+      <% unless image_url.blank? %>
+        <%= image_tag image_url, alt: 'User Icon', class: 'w-8 h-8 rounded-full mr-2' %>
+      <% else %>
+        <img src="user_icon_1.jpg" alt="User Icon" class="w-8 h-8 rounded-full mr-2">
+      <% end %>
+
+      <span class="font-semibold"><%= message.channel_member.slack_account.name %></span>
+      <span class="text-gray-400">#<%= message.channel_member.slack_channel.name %></span>
+      <span class="text-sm"><%= l Time.zone.at(message.slack_timestamp), format: :long %></span>
+    </div>
+    <p class="text-gray-700"><%= message.original_message %></p>
+  </div>
+
+  <div>
+    <div class="border-r pr-4 mr-4">
+    </div>
+    <div>
+      <span class="">😄</span>
+    </div>
+  </div>
+</div>
+
