@@ -5,6 +5,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_account_update_params, only: [:update]
 
   def edit
+    slack_client = Slack::Web::Client.new
+    @channels_response = slack_client.conversations_list['channels']
+
     super
   end
 

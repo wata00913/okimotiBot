@@ -35,3 +35,8 @@
     <%= f.submit t('.update') %>
   </div>
 <% end %>
+
+<%= select_tag :observed_channels,
+  options_from_collection_for_select(@channels_response, 'id', 'name'),
+  include_blank: true
+%>
