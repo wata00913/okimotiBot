@@ -12,8 +12,8 @@ class SentimentScore < ApplicationRecord
     neutral: '😐'
   }.freeze
 
-  def to_emotion
-    scores = attributes.transform_keys(&:to_sym).slice(:positive, :negative, :neutral)
+  def best_emotion
+    scores = attributes.transform_keys(&:to_sym).slice(*ICON_TYPE.keys)
     max_type = scores.max_by { |_, v| v }[0]
     ICON_TYPE[max_type]
   end
