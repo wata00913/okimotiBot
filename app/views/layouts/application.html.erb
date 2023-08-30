@@ -23,6 +23,14 @@
       </div>
     <% end %>
 
-    <%= yield %>
+    <div class="grid grid-cols-4 flex h-screen">
+      <div class="col-span-1">
+        <%= render partial: 'layouts/navigation' %>   
+      </div>
+
+      <div class="col-span-3 ml-6">
+        <%= yield %>
+      </div>
+    </div>
   </body>
 </html>
