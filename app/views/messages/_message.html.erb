@@ -2,10 +2,10 @@
   <div class="col-span-2">
     <div class="flex items center mb-2">
       <% image_url = message.channel_member.slack_account.image_url %>
-      <% unless image_url.blank? %>
-        <%= image_tag image_url, alt: 'User Icon', class: 'w-8 h-8 rounded-full mr-2' %>
-      <% else %>
+      <% if image_url.blank? %>
         <img src="user_icon_1.jpg" alt="User Icon" class="w-8 h-8 rounded-full mr-2">
+      <% else %>
+        <%= image_tag image_url, alt: 'User Icon', class: 'w-8 h-8 rounded-full mr-2' %>
       <% end %>
 
       <span class="font-semibold mr-2"><%= message.channel_member.slack_account.name %></span>
