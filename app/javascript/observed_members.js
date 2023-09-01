@@ -1,3 +1,7 @@
+import { ObservedChannelMembers } from "./observed_channel_members"
+
+const observedChannelMembers = new ObservedChannelMembers()
+
 document.addEventListener("DOMContentLoaded", (_) => {
   const observedChannelsEl = document.querySelector("#observed_channels")
 
