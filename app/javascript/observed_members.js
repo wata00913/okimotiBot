@@ -29,6 +29,10 @@ async function insertChannelAndChannelMembers(event) {
     displayView(view, getObservedChannelElId(channelInfo), 'beforeend')
   })
 
+  observedChannelMembers.registerChannel(channelInfo.id,
+    channelMembers.map(m => m.account_id)
+  )
+
 }
 
 function fetchChannelMembers(channelId) {
