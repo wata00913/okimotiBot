@@ -14,6 +14,7 @@ async function insertChannelAndChannelMembers(event) {
   }
 
   if (channelInfo.id === '') return
+  if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
   displayView(createChannelView(channelInfo), 'test', 'afterbegin')
 
@@ -21,7 +22,7 @@ async function insertChannelAndChannelMembers(event) {
   const channelMembers = data.channel_members
   channelMembers.forEach(channelMember => {
     view = createUserView(channelMember)
-    displayView(view, 'observed_channel', 'beforeend')
+    displayView(view, getObservedChannelElId(channelInfo), 'beforeend')
   })
 
 }
@@ -39,10 +40,8 @@ function fetchChannelMembers(channelId) {
 
 // ES6でコンパイルした場合、onclickで関数を実行するとReferenceErrorが発生。
 // 実行できるようにメソッドをwindowに設定
-window.deleteObservedChannel = function deleteObservedChannel(event)  {
-  deleteButtonEl = event.target
-  targetEl = deleteButtonEl.closest('#observed_channel')
-  targetEl.remove()
+window.deleteObservedChannel = function deleteObservedChannel(parentEl)  {
+  parentEl.remove()
 }
 
 function displayView(view, parentId, position) {
@@ -51,11 +50,12 @@ function displayView(view, parentId, position) {
 }
 
 function createChannelView(channelInfo) {
+  const observedChannelElId = getObservedChannelElId(channelInfo)
   return escapeHTML`
-    <div id="observed_channel" class="flex-col my-3">
+    <div id="${observedChannelElId}" class="flex-col my-3">
       <div class="flex">
         <p>${channelInfo.name}</p>
-        <button onclick="deleteObservedChannel(event)" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
+        <button onclick="deleteObservedChannel(${observedChannelElId})" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
       </div>
     </div>
     `
@@ -72,6 +72,10 @@ function createUserView(userInfo) {
       </label>
     </div>
     `
+}
+
+function getObservedChannelElId(channelInfo) {
+  return `observed_channel_${channelInfo.id}`
 }
 
 function escapeHTML(strings, ...values) {
