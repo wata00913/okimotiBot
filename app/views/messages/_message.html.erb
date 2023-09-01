@@ -17,7 +17,11 @@
 
   <div class="col-span-1 border-l-4">
     <div class="flex items-center justify-center">
-      <span class="text-6xl"><%= message.sentiment_score.best_emotion %></span>
+      <% if message.sentiment_score.blank? %>
+        <span class="text-xl">未解析です</span>
+      <% else %>
+        <span class="text-6xl"><%= message.sentiment_score.best_emotion %></span>
+      <% end %>
     </div>
   </div>
 </div>
