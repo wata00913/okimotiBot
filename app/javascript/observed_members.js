@@ -3,7 +3,7 @@ import { ObservedChannelMembers } from "./observed_channel_members"
 const observedChannelMembers = new ObservedChannelMembers()
 
 document.addEventListener("DOMContentLoaded", (_) => {
-  const observedChannelsEl = document.querySelector("#observed_channels")
+  const observedChannelsEl = document.getElementById("select_channel")
 
   if (observedChannelsEl !== null) {
     observedChannelsEl.addEventListener('change', insertChannelAndChannelMembers)

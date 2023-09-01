@@ -33,7 +33,7 @@
 
   <div id='observed_channels'>
     <%= hidden_field_tag :user_observed_channel_members %>
-    <%= select_tag :selected_channel,
+    <%= select_tag :select_channel,
       options_from_collection_for_select(@channels_response, 'id', 'name'),
       include_blank: true
     %>
