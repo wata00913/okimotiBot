@@ -58,6 +58,10 @@ function createUserView(userInfo) {
     <div class="flex mb-1 px-4">
       <p class="flex items-center">${userInfo.name}</p>
       <img src="${userInfo.image_url}" alt="アカウントアイコン" class="ml-4 w-[50px] h-[50px]">
+      <label for="${userInfo.account_id}" class="flex items-center ml-4">
+        <input type="checkbox" id="${userInfo.account_id}" />
+        監視対象
+      </label>
     </div>
     `
 }
