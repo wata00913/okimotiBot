@@ -48,8 +48,10 @@ function fetchChannelMembers(channelId) {
 
 // ES6でコンパイルした場合、onclickで関数を実行するとReferenceErrorが発生。
 // 実行できるようにメソッドをwindowに設定
-window.deleteObservedChannel = function deleteObservedChannel(parentEl)  {
+window.onClickObservedChannelButton = function onClickObservedChannelButton(parentEl, channelId)  {
   parentEl.remove()
+
+  observedChannelMembers.deleteChannel(channelId)
 }
 
 function displayView(view, parentId, position) {
@@ -63,7 +65,7 @@ function createChannelView(channelInfo) {
     <div id="${observedChannelElId}" class="flex-col my-3">
       <div class="flex">
         <p>${channelInfo.name}</p>
-        <button onclick="deleteObservedChannel(${observedChannelElId})" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
+        <button onclick="onClickObservedChannelButton(${observedChannelElId}, '${channelInfo.id}')" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
       </div>
     </div>
     `

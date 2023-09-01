@@ -19,7 +19,8 @@ export class ObservedChannelMembers {
   }
 
   // チャンネルの削除
-  deleteChannel(channel_id) {
+  deleteChannel(channelId) {
+    this.data = this.data.filter(d => d.channelId !== channelId)
   }
 
   #isRegisterd(channelId) {
