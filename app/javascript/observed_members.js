@@ -37,6 +37,14 @@ function fetchChannelMembers(channelId) {
     })
 }
 
+// ES6でコンパイルした場合、onclickで関数を実行するとReferenceErrorが発生。
+// 実行できるようにメソッドをwindowに設定
+window.deleteObservedChannel = function deleteObservedChannel(event)  {
+  deleteButtonEl = event.target
+  targetEl = deleteButtonEl.closest('#observed_channel')
+  targetEl.remove()
+}
+
 function displayView(view, parentId, position) {
   const target = document.getElementById(parentId)
   target.insertAdjacentHTML(position, view)
@@ -45,9 +53,9 @@ function displayView(view, parentId, position) {
 function createChannelView(channelInfo) {
   return escapeHTML`
     <div id="observed_channel" class="flex-col my-3">
-      <div>
-        <p class="">${channelInfo.name}</p>
+      <div class="flex">
         <p>${channelInfo.name}</p>
+        <button onclick="deleteObservedChannel(event)" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
       </div>
     </div>
     `
