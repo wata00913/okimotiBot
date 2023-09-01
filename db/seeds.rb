@@ -47,7 +47,7 @@ alice.channel_members.second.messages.create(
   ]
 )
 
-Message.all.each do |message|
+Message.limit(Message.all.size / 2).each do |message|
   message.create_sentiment_score(
     positive: rand,
     negative: rand,
