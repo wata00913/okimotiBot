@@ -4,7 +4,9 @@ export class ObservedChannelMembers {
   }
 
   // 監視ユーザーのON, OFF
-  toggleObserve(channelId, accountId, isOn) {
+  setObserve(channelId, accountId, observe) {
+    const member = this.#getChannelMember(channelId, accountId)
+    member.observe = observe
   }
 
   // チャンネルの追加
@@ -30,5 +32,10 @@ export class ObservedChannelMembers {
 
   #getChannelIds() {
     return this.data.map(d => d.channelId)
+  }
+
+  #getChannelMember(channelId, accountId) {
+    return this.data.find(d => d.channelId === channelId)
+               .members.find(m => m.accountId === accountId)
   }
 }
