@@ -7,7 +7,7 @@ class ChannelMember < ApplicationRecord
   has_many :messages, dependent: :destroy
 
   has_many :observed_members, dependent: :destroy
-  has_many :users, through: :observed_members
+  has_many :observers, through: :observed_members, source: :user
 
   validates :slack_channel_id, presence: true, uniqueness: { scope: :slack_account_id }
   validates :slack_account_id, presence: true
