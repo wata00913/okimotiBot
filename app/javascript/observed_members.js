@@ -25,7 +25,7 @@ async function insertChannelAndChannelMembers(event) {
   const data = await fetchChannelMembers(channelInfo.id)
   const channelMembers = data.channel_members
   channelMembers.forEach(channelMember => {
-    view = createUserView(channelMember)
+    const view = createUserView(channelInfo, channelMember)
     displayView(view, getObservedChannelElId(channelInfo), 'beforeend')
   })
 
@@ -65,9 +65,9 @@ function createChannelView(channelInfo) {
     `
 }
 
-function createUserView(userInfo) {
+function createUserView(channelInfo, userInfo) {
   return escapeHTML`
-    <div class="flex mb-1 px-4">
+    <div id="${getObservedChannelMemberElId(channelInfo, userInfo)}" class="flex mb-1 px-4">
       <p class="flex items-center">${userInfo.name}</p>
       <img src="${userInfo.image_url}" alt="アカウントアイコン" class="ml-4 w-[50px] h-[50px]">
       <label for="${userInfo.account_id}" class="flex items-center ml-4">
@@ -80,6 +80,10 @@ function createUserView(userInfo) {
 
 function getObservedChannelElId(channelInfo) {
   return `observed_channel_${channelInfo.id}`
+}
+
+function getObservedChannelMemberElId(channelInfo, userInfo) {
+  return `observed_channel_member_${channelInfo.id}_${userInfo.account_id}`
 }
 
 function escapeHTML(strings, ...values) {
