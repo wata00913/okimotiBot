@@ -16,7 +16,7 @@ async function insertChannelAndChannelMembers(event) {
   if (channelInfo.id === '') return
   if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
-  displayView(createChannelView(channelInfo), 'test', 'afterbegin')
+  displayView(createChannelView(channelInfo), 'observed_channels', 'beforeend')
 
   const data = await fetchChannelMembers(channelInfo.id)
   const channelMembers = data.channel_members

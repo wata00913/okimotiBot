@@ -31,16 +31,15 @@
     <%= f.password_field :current_password, autocomplete: "current-password" %>
   </div>
 
+  <div id='observed_channels'>
+    <%= select_tag :selected_channel,
+      options_from_collection_for_select(@channels_response, 'id', 'name'),
+      include_blank: true
+    %>
+  </div>
+
   <div class="actions">
     <%= f.submit t('.update') %>
   </div>
 <% end %>
 
-<%= select_tag :observed_channels,
-  options_from_collection_for_select(@channels_response, 'id', 'name'),
-  include_blank: true
-%>
-
-<div id='test'>
-  
-</div>
