@@ -1,0 +1,28 @@
+<div class="grid grid-cols-3 bg-white p-4 rounded-lg shadow-md">
+  <div class="col-span-2">
+    <div class="flex items center mb-2">
+      <% image_url = message.channel_member.slack_account.image_url %>
+      <% if image_url.blank? %>
+        <img src="user_icon_1.jpg" alt="User Icon" class="w-8 h-8 rounded-full mr-2">
+      <% else %>
+        <%= image_tag image_url, alt: 'User Icon', class: 'w-8 h-8 rounded-full mr-2' %>
+      <% end %>
+
+      <span class="font-semibold mr-2"><%= message.channel_member.slack_account.name %></span>
+      <span class="text-gray-400 text-sm mr-2">#<%= message.channel_member.slack_channel.name %></span>
+      <span class="text-sm"><%= l Time.zone.at(message.slack_timestamp), format: :long %></span>
+    </div>
+    <span class="text-gray-700 break-all"><%= message.original_message %></span>
+  </div>
+
+  <div class="col-span-1 border-l-4">
+    <div class="flex items-center justify-center h-full">
+      <% if message.sentiment_score.blank? %>
+        <span class="text-xl">未解析です</span>
+      <% else %>
+        <span class="text-6xl"><%= message.sentiment_score.best_emotion %></span>
+      <% end %>
+    </div>
+  </div>
+</div>
+
