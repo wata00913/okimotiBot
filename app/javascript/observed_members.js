@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", (_) => {
 
   if (observedChannelsEl !== null) {
     observedChannelsEl.addEventListener('change', insertChannelAndChannelMembers)
+    
+    const submitEl = document.querySelector('input[type="submit"]')
+    submitEl.addEventListener('click', () => {
+      onClickSubmitButton(observedChannelMembers)
+    })
   }
 })
 
@@ -73,6 +78,11 @@ function createChannelView(channelInfo) {
 
 window.onClickObservedMemberCheckBox = function onClickObservedMemberCheckBox(event, channelId, accountId) {
   observedChannelMembers.setObserve(channelId, accountId, event.target.checked)
+}
+
+function onClickSubmitButton(observedChannelMembers) {
+  const hiddenInputEl = document.getElementById('user_observed_channel_members')
+  hiddenInputEl.value = JSON.stringify(observedChannelMembers.getData())
 }
 
 function createUserView(channelInfo, userInfo) {

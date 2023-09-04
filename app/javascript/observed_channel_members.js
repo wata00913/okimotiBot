@@ -23,6 +23,10 @@ export class ObservedChannelMembers {
     this.data = this.data.filter(d => d.channelId !== channelId)
   }
 
+  getData() {
+    return JSON.parse(JSON.stringify(this.data))
+  }
+
   #isRegisterd(channelId) {
     const channelIds = this.#getChannelIds()
 
