@@ -2,7 +2,7 @@
 
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
+  before_action :configure_account_update_params, only: [:update]
 
   def edit
     slack_client = Slack::Web::Client.new
@@ -17,20 +17,33 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def update
+    attrs = JSON.parse(params[:observed_members_attributes]).map do |channel_members_param|
+      channel_members_param['members'].map do |channel_member|
+        attr = { 'user_id' => current_user.id,
+                 'channel_member_id' => channel_member['channel_member_id'] }
+        attr['_destroy'] = true unless channel_member['observe']
+        attr
+      end
+    end.flatten
+    params['user']['observed_members_attributes'] = attrs
+
     super
   end
 
-  # protected
+  protected
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params
   #   devise_parameter_sanitizer.permit(:sign_up, keys: [:attribute])
   # end
 
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
-  # end
+  def configure_account_update_params
+    devise_parameter_sanitizer.permit(:account_update,
+                                      keys: [
+                                        :name,
+                                        { observed_members_attributes: %i[user_id channel_member_id] }
+                                      ])
+  end
 
   # The path used after sign up.
   # def after_sign_up_path_for(resource)
