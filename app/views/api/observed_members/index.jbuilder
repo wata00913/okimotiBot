@@ -1,5 +1,5 @@
-json.channel_members @channel_members_info do |member_info|
-  json.account_id member_info['id']
-  json.name member_info['real_name']
-  json.image_url member_info['profile']['image_original']
+json.channel_members @channel.channel_members.includes(:slack_channel, :slack_account) do |channel_member|
+  json.channel_member_id channel_member.id
+  json.name channel_member.slack_account.name
+  json.image_url channel_member.slack_account.image_url
 end

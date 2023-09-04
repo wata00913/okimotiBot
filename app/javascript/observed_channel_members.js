@@ -4,8 +4,8 @@ export class ObservedChannelMembers {
   }
 
   // 監視ユーザーのON, OFF
-  setObserve(channelId, accountId, observe) {
-    const member = this.#getChannelMember(channelId, accountId)
+  setObserve(channelId, channelMemberId, observe) {
+    const member = this.#getChannelMember(channelId, channelMemberId)
     member.observe = observe
   }
 
@@ -13,14 +13,14 @@ export class ObservedChannelMembers {
   registerChannel(channelId, accountIds) {
     if (this.#isRegisterd(channelId)) return
 
-    const members = accountIds.map(id => ({ accountId: id, observe: false }))
+    const members = accountIds.map(id => ({ channel_member_id: id, observe: false }))
 
-    this.data.push({channelId: channelId, members: members})
+    this.data.push({channel_id: channelId, members: members})
   }
 
   // チャンネルの削除
   deleteChannel(channelId) {
-    this.data = this.data.filter(d => d.channelId !== channelId)
+    this.data = this.data.filter(d => d.channel_id !== channelId)
   }
 
   getData() {
@@ -36,11 +36,11 @@ export class ObservedChannelMembers {
   }
 
   #getChannelIds() {
-    return this.data.map(d => d.channelId)
+    return this.data.map(d => d.channel_id)
   }
 
-  #getChannelMember(channelId, accountId) {
-    return this.data.find(d => d.channelId === channelId)
-               .members.find(m => m.accountId === accountId)
+  #getChannelMember(channelId, channelMemberId) {
+    return this.data.find(d => d.channel_id === channelId)
+               .members.find(m => m.channel_member_id === channelMemberId)
   }
 }

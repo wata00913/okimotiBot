@@ -35,7 +35,7 @@ async function insertChannelAndChannelMembers(event) {
   })
 
   observedChannelMembers.registerChannel(channelInfo.id,
-    channelMembers.map(m => m.account_id)
+    channelMembers.map(m => m.channel_member_id)
   )
 
 }
@@ -90,8 +90,8 @@ function createUserView(channelInfo, userInfo) {
     <div id="${getObservedChannelMemberElId(channelInfo, userInfo)}" class="flex mb-1 px-4">
       <p class="flex items-center">${userInfo.name}</p>
       <img src="${userInfo.image_url}" alt="アカウントアイコン" class="ml-4 w-[50px] h-[50px]">
-      <label for="${userInfo.account_id}" class="flex items-center ml-4">
-        <input type="checkbox" onclick="onClickObservedMemberCheckBox(event, '${channelInfo.id}', '${userInfo.account_id}')" id="${userInfo.account_id}" />
+      <label for="${userInfo.channel_member_id}" class="flex items-center ml-4">
+        <input type="checkbox" onclick="onClickObservedMemberCheckBox(event, '${channelInfo.id}', ${userInfo.channel_member_id})" id="${userInfo.channel_member_id}" />
         監視対象
       </label>
     </div>
@@ -103,7 +103,7 @@ function getObservedChannelElId(channelInfo) {
 }
 
 function getObservedChannelMemberElId(channelInfo, userInfo) {
-  return `observed_channel_member_${channelInfo.id}_${userInfo.account_id}`
+  return `observed_channel_member_${channelInfo.id}_${userInfo.channel_member_id}`
 }
 
 function escapeHTML(strings, ...values) {
