@@ -6,7 +6,16 @@ class Api::ObservedMembersController < ActionController::API
     channel_member_ids = client.conversations_members(channel: params[:channel_id])['members']
 
     @channel_members_info = channel_member_ids.map do |id|
-      client.users_info(user: id)['user']
+      user_info = client.users_info(user: id)['user']
+      member = SlackAccount.find_or_create_by!(account_id: user_info['id']) do |account|
+        account.name = user_info['real_name']
+        account.image_url = user_info['profile']['image_original']
+      end
+
+      channel = SlackChannel.find_by(channel_id: params[:channel_id])
+      channel.accounts << member unless channel.accounts.exists?(member.account_id)
+
+      user_info
     end
   end
 end

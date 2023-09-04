@@ -8,6 +8,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
     slack_client = Slack::Web::Client.new
     @channels_response = slack_client.conversations_list['channels']
 
+    @channels_response.each do |channel_response|
+      SlackChannel.find_or_create_by!(channel_id: channel_response['id']) do |channel|
+        channel.name = channel_response['name']
+      end
+    end
     super
   end
 
