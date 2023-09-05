@@ -56,7 +56,9 @@ ja:
         sign_in: ログイン
         sign_out: ログアウト
         sign_in_with_provider: "%{provider}でログイン"
-        sign_up: ユーザー登録はこちら
+        sign_up: ユーザー登録
+        lead_sign_up: ユーザー登録はこちら
+        lead_sign_in: ログインはこちら
       minimum_password_length: "（%{count}字以上）"
   devise:
     registrations:
