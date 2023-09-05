@@ -1,0 +1,12 @@
+<header class="p-3 bg-gray-100 flex fixed top-0 w-full">
+  <div class="flex justify-between w-full mb-4">
+    <%= link_to 'okimotiBot', messages_path,  class: 'text-5xl text-blue-500' %>
+
+    <div class="flex items-center">
+      <% if user_signed_in? %>
+        <%= link_to 'ユーザー情報編集', edit_user_registration_path, class: 'mr-3 text-blue-500 hover:underline' %>
+        <%= link_to 'ログアウト', destroy_user_session_path, data: { turbo_method: :delete }, class: 'px-4 py-2 h-10 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300' %>
+      <% end %>
+    </div>
+  </div>
+</header>
