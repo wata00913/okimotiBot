@@ -10,10 +10,11 @@ export class ObservedChannelMembers {
   }
 
   // チャンネルの追加
-  registerChannel(channelId, accountIds) {
+  registerChannel(channelId, channelMembersInfo) {
     if (this.#isRegisterd(channelId)) return
 
-    const members = accountIds.map(id => ({ channel_member_id: id, observe: false }))
+    const members = channelMembersInfo.map(channelMemberInfo => 
+      ({ channel_member_id: channelMemberInfo.channel_member_id, observe: channelMemberInfo.observe }))
 
     this.data.push({channel_id: channelId, members: members})
   }

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", (_) => {
   const observedChannelsEl = document.getElementById("select_channel")
 
   if (observedChannelsEl !== null) {
-    observedChannelsEl.addEventListener('change', insertChannelAndChannelMembers)
+    observedChannelsEl.addEventListener('change', onChangeObservedChannelsSelect)
     
     const submitEl = document.querySelector('input[type="submit"]')
     submitEl.addEventListener('click', () => {
@@ -15,29 +15,34 @@ document.addEventListener("DOMContentLoaded", (_) => {
   }
 })
 
-
-async function insertChannelAndChannelMembers(event) {
+async function onChangeObservedChannelsSelect(event) {
   const channelInfo = {
     id: event.target.value,
     name: event.target.options[event.target.selectedIndex].text
   }
 
   if (channelInfo.id === '') return
+
+  const data = await fetchChannelMembers(channelInfo.id)
+  const channelMembersInfo = data.channel_members
+  // 選択時、チャンネル内の全ユーザーは監視対象のチェックOFF
+  channelMembersInfo.forEach((channelMemberInfo) => {
+    channelMemberInfo.observe = false
+  })
+
+  insertChannelAndChannelMembers(channelInfo, channelMembersInfo)
+  observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo)
+}
+
+function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
   if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
   displayView(createChannelView(channelInfo), 'observed_channels', 'beforeend')
 
-  const data = await fetchChannelMembers(channelInfo.id)
-  const channelMembers = data.channel_members
-  channelMembers.forEach(channelMember => {
-    const view = createUserView(channelInfo, channelMember)
+  channelMembersInfo.forEach(channelMemberInfo => {
+    const view = createUserView(channelInfo, channelMemberInfo)
     displayView(view, getObservedChannelElId(channelInfo), 'beforeend')
   })
-
-  observedChannelMembers.registerChannel(channelInfo.id,
-    channelMembers.map(m => m.channel_member_id)
-  )
-
 }
 
 function fetchChannelMembers(channelId) {
