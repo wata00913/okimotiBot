@@ -41,7 +41,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     devise_parameter_sanitizer.permit(:account_update,
                                       keys: [
                                         :name,
-                                        { observed_members_attributes: %i[user_id channel_member_id] }
+                                        { observed_members_attributes: %i[user_id channel_member_id _destroy] }
                                       ])
   end
 
