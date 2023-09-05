@@ -58,6 +58,7 @@ ja:
         sign_in_with_provider: "%{provider}でログイン"
         sign_up: ユーザー登録
         lead_sign_up: ユーザー登録はこちら
+        lead_sign_in: ログインはこちら
       minimum_password_length: "（%{count}字以上）"
   devise:
     registrations:
