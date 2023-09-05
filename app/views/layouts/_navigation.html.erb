@@ -1,6 +1,6 @@
-<nav class="p-4 bg-gray-100 flex h-screen justify-center fixed w-1/4">
+<nav>
   <% if user_signed_in? %>
-    <ul>
+    <ul class="flex space-x-4">
       <li class="mb-6">
         <%= link_to t('users.shared.links.sign_out'), destroy_user_session_path, data: { turbo_method: :delete }, class: 'px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300' %>
       </li>
