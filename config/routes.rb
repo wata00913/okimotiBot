@@ -5,5 +5,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     get 'observed_members', to: 'observed_members#index'
+    resources :slack_channels, only: %i[index] do
+      scope module: :slack_channels do
+        resources :members, only: %i[index]
+      end
+    end
   end
 end

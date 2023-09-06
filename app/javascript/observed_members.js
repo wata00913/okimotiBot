@@ -46,7 +46,7 @@ function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
 }
 
 function fetchChannelMembers(channelId) {
-  return fetch(`/api/observed_members?channel_id=${channelId}`)
+  return fetch(`/api/slack_channels/${channelId}/members`)
     .then((response) => {
       if (!response.ok) {
         return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
