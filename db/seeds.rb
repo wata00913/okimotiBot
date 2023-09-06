@@ -6,6 +6,12 @@ alice = User.create(
   password: 'testtest'
 )
 
+User.create(
+  name: 'bob',
+  email: 'test1@example.com',
+  password: 'testtest'
+)
+
 wata_minute_report_channel = SlackChannel.create(
   channel_id: '1',
   name: 'wataの分報'
