@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", (_) => {
 
   if (observedChannelsEl !== null) {
     observedChannelsEl.addEventListener('change', onChangeObservedChannelsSelect)
+
+    initChannelAndChannelMembers()
     
     const submitEl = document.querySelector('input[type="submit"]')
     submitEl.addEventListener('click', () => {
@@ -22,6 +24,7 @@ async function onChangeObservedChannelsSelect(event) {
   }
 
   if (channelInfo.id === '') return
+  if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
   const data = await fetchChannelMembers(channelInfo.id)
   const channelMembersInfo = data.channel_members
@@ -34,8 +37,36 @@ async function onChangeObservedChannelsSelect(event) {
   observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo, { destroy: true })
 }
 
+async function initChannelAndChannelMembers() {
+  let data;
+  data = await fetchObservedMembers()
+  const observedMembersResponse = data.observed_members
+  const promData = observedMembersResponse.map(async (channelToObservedMembers) => {
+    const channel = channelToObservedMembers.channel
+    const channelId = channel.id
+    const observedMembers = channelToObservedMembers.members
+
+    data = await fetchChannelMembers(channelId)
+    const members = data.channel_members
+
+    members.forEach((member) => {
+      if(observedMembers.findIndex(m => m.accountId === member.id) !== -1) {
+        member.observe = true
+      } else {
+        member.observe = false
+      }
+    })
+    return { channel: channel, members: members }
+  })
+  const channelMembers = await Promise.all(promData)
+
+  channelMembers.forEach(data => {
+    insertChannelAndChannelMembers(data.channel, data.members)
+    observedChannelMembers.registerChannel(data.channel.id, data.members, { destroy: false })
+  })
+}
+
 function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
-  if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
   displayView(createChannelView(channelInfo), 'observed_channels', 'beforeend')
 
@@ -43,6 +74,17 @@ function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
     const view = createUserView(channelInfo, channelMemberInfo)
     displayView(view, getObservedChannelElId(channelInfo), 'beforeend')
   })
+}
+
+function fetchObservedMembers() {
+  return fetch(`/api/observed_members`)
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
+      } else {
+        return response.json()
+      }
+    })
 }
 
 function fetchChannelMembers(channelId) {
@@ -91,12 +133,13 @@ function onClickSubmitButton(observedChannelMembers) {
 }
 
 function createUserView(channelInfo, userInfo) {
+  const checkedStr = userInfo.observe ? 'checked' : ''
   return escapeHTML`
     <div id="${getObservedChannelMemberElId(channelInfo, userInfo)}" class="flex mb-1 px-4">
       <p class="flex items-center">${userInfo.name}</p>
       <img src="${userInfo.image_url}" alt="アカウントアイコン" class="ml-4 w-[50px] h-[50px]">
       <label for="${userInfo.channel_member_id}" class="flex items-center ml-4">
-        <input type="checkbox" onclick="onClickObservedMemberCheckBox(event, '${channelInfo.id}', ${userInfo.channel_member_id})" id="${userInfo.channel_member_id}" />
+        <input type="checkbox" onclick="onClickObservedMemberCheckBox(event, '${channelInfo.id}', ${userInfo.channel_member_id})" id="${userInfo.channel_member_id}" ${checkedStr} />
         監視対象
       </label>
     </div>
