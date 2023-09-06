@@ -118,7 +118,7 @@ function createChannelView(channelInfo) {
   return escapeHTML`
     <div id="${observedChannelElId}" class="flex-col my-3">
       <div class="flex">
-        <p>${channelInfo.name}</p>
+        <p>#${channelInfo.name}</p>
         <button onclick="onClickObservedChannelButton(${observedChannelElId}, '${channelInfo.id}')" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
       </div>
     </div>
