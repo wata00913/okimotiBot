@@ -46,6 +46,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
                                       ])
   end
 
+  def update_resource(resource, params)
+    if params[:password].blank? && params[:password_confirmation].blank?
+      params.delete(:password)
+      params.delete(:password_confirmation)
+      params.delete(:current_password)
+
+      resource.update_without_password(params)
+    else
+      resource.update_with_password(params)
+    end
+  end
+
   # The path used after sign up.
   # def after_sign_up_path_for(resource)
   #   super(resource)
