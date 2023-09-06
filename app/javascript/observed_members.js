@@ -1,11 +1,13 @@
 import { ObservedChannelMembers } from "./observed_channel_members"
 
-const observedChannelMembers = new ObservedChannelMembers()
+let observedChannelMembers
 
 document.addEventListener("turbo:load", (_) => {
   const observedChannelsEl = document.getElementById("select_channel")
 
   if (observedChannelsEl !== null) {
+    observedChannelMembers = new ObservedChannelMembers()
+
     observedChannelsEl.addEventListener('change', onChangeObservedChannelsSelect)
 
     initChannelAndChannelMembers()
