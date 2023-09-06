@@ -2,18 +2,18 @@
 
 class Api::ObservedMembersController < ActionController::API
   def index
-    client = Slack::Web::Client.new
-    @channel = SlackChannel.find_by(channel_id: params[:channel_id])
-
-    channel_member_ids = client.conversations_members(channel: params[:channel_id])['members']
-    channel_member_ids.map do |id|
-      user_info = client.users_info(user: id)['user']
-      member = SlackAccount.find_or_create_by!(account_id: user_info['id']) do |account|
-        account.name = user_info['real_name']
-        account.image_url = user_info['profile']['image_original']
+    @observed_members = current_user.observed_members
+      .to_ary.group_by { |m| m.channel_member.slack_channel }
+      .map do |channel, observed_members|
+        data = {}
+        data['channel'] = { 'id' => channel.channel_id, 'name' => channel.name }
+        data['members'] = observed_members.map do |observed_member|
+          account = observed_member.channel_member.slack_account
+          { 'channel_member_id' => observed_member.channel_member_id,
+            'name' => account.name,
+            'image_url' => account.image_url }
+        end
+        data
       end
-
-      @channel.accounts << member unless @channel.accounts.exists?(member.id)
-    end
   end
 end
