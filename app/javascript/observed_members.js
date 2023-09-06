@@ -50,10 +50,12 @@ async function initChannelAndChannelMembers() {
     const members = data.channel_members
 
     members.forEach((member) => {
-      if(observedMembers.findIndex(m => m.accountId === member.id) !== -1) {
-        member.observe = true
-      } else {
+      const observedMember = observedMembers.find(m => m.channel_member_id === member.channel_member_id)
+      if(observedMember === undefined) {
         member.observe = false
+      } else {
+        member.observe = true
+        member.id = observedMember.id
       }
     })
     return { channel: channel, members: members }

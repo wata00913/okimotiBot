@@ -21,6 +21,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       channel_members_param['members'].map do |channel_member|
         attr = { 'user_id' => current_user.id,
                  'channel_member_id' => channel_member['channel_member_id'] }
+        attr['id'] = channel_member['id'] if channel_member.key?('id')
         attr['_destroy'] = true unless channel_member['observe']
         attr
       end
@@ -41,7 +42,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     devise_parameter_sanitizer.permit(:account_update,
                                       keys: [
                                         :name,
-                                        { observed_members_attributes: %i[user_id channel_member_id _destroy] }
+                                        { observed_members_attributes: %i[id user_id channel_member_id _destroy] }
                                       ])
   end
 

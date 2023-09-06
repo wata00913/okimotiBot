@@ -14,8 +14,13 @@ export class ObservedChannelMembers {
   registerChannel(channelId, channelMembersInfo, { destroy = true }) {
     if (this.#isRegisterd(channelId)) return
 
-    const members = channelMembersInfo.map(channelMemberInfo => 
-      ({ channel_member_id: channelMemberInfo.channel_member_id, observe: channelMemberInfo.observe }))
+    const members = channelMembersInfo.map(channelMemberInfo => {
+      const data = { channel_member_id: channelMemberInfo.channel_member_id, observe: channelMemberInfo.observe }
+      if (channelMemberInfo.hasOwnProperty('id')) {
+        data.id = channelMemberInfo.id
+      }
+      return data
+    })
 
     this.data.push({channel_id: channelId, members: members})
     
