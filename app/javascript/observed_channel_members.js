@@ -1,6 +1,7 @@
 export class ObservedChannelMembers {
   constructor() {
     this.data = []
+    this.notDestroyChannelIds = []
   }
 
   // 監視ユーザーのON, OFF
@@ -10,18 +11,31 @@ export class ObservedChannelMembers {
   }
 
   // チャンネルの追加
-  registerChannel(channelId, channelMembersInfo) {
+  registerChannel(channelId, channelMembersInfo, { destroy = true }) {
     if (this.#isRegisterd(channelId)) return
 
     const members = channelMembersInfo.map(channelMemberInfo => 
       ({ channel_member_id: channelMemberInfo.channel_member_id, observe: channelMemberInfo.observe }))
 
     this.data.push({channel_id: channelId, members: members})
+    
+    if (!destroy) {
+      this.notDestroyChannelIds.push(channelId)
+    }
   }
 
   // チャンネルの削除
+  // チャンネルの削除フラグがONの場合は、チャンネルとチャンネル内メンバーを削除
+  // チャンネルの削除フラグがOFFの場合は、監視対象ユーザーをOFFにする
   deleteChannel(channelId) {
-    this.data = this.data.filter(d => d.channel_id !== channelId)
+    if (this.notDestroyChannelIds.findIndex(id => id === channelId) === -1) {
+      this.data = this.data.filter(d => d.channel_id !== channelId)
+    } else {
+      const channelMembers = this.#getChannelMembers(channelId)
+      channelMembers.forEach((channelMember) => {
+        channelMember.observe = false
+      })
+    }
   }
 
   getData() {
@@ -38,6 +52,10 @@ export class ObservedChannelMembers {
 
   #getChannelIds() {
     return this.data.map(d => d.channel_id)
+  }
+
+  #getChannelMembers(channelId) {
+    return this.data.find(d => d.channel_id === channelId).members
   }
 
   #getChannelMember(channelId, channelMemberId) {

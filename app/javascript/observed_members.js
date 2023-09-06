@@ -31,7 +31,7 @@ async function onChangeObservedChannelsSelect(event) {
   })
 
   insertChannelAndChannelMembers(channelInfo, channelMembersInfo)
-  observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo)
+  observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo, { destroy: true })
 }
 
 function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
