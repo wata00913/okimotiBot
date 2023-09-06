@@ -2,7 +2,7 @@ import { ObservedChannelMembers } from "./observed_channel_members"
 
 const observedChannelMembers = new ObservedChannelMembers()
 
-document.addEventListener("DOMContentLoaded", (_) => {
+document.addEventListener("turbo:load", (_) => {
   const observedChannelsEl = document.getElementById("select_channel")
 
   if (observedChannelsEl !== null) {
