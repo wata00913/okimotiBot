@@ -28,27 +28,45 @@ async function onChangeObservedChannelsSelect(event) {
   if (channelInfo.id === '') return
   if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
 
-  const data = await fetchChannelMembers(channelInfo.id)
-  const channelMembersInfo = data.channel_members
-  // 選択時、チャンネル内の全ユーザーは監視対象のチェックOFF
-  channelMembersInfo.forEach((channelMemberInfo) => {
-    channelMemberInfo.observe = false
-  })
+  try {
+    const data = await fetchChannelMembers(channelInfo.id)
 
-  insertChannelAndChannelMembers(channelInfo, channelMembersInfo)
-  observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo, { destroy: true })
+    const channelMembersInfo = data.channel_members
+    // 選択時、チャンネル内の全ユーザーは監視対象のチェックOFF
+    channelMembersInfo.forEach((channelMemberInfo) => {
+      channelMemberInfo.observe = false
+    })
+
+    insertChannelAndChannelMembers(channelInfo, channelMembersInfo)
+    observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo, { destroy: true })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function initChannelAndChannelMembers() {
-  let data;
-  data = await fetchObservedMembers()
+  let data
+  try {
+    data = await fetchObservedMembers()
+  } catch (error) {
+    console.log(error)
+    return
+  }
+
   const observedMembersResponse = data.observed_members
   const promData = observedMembersResponse.map(async (channelToObservedMembers) => {
     const channel = channelToObservedMembers.channel
     const channelId = channel.id
     const observedMembers = channelToObservedMembers.members
 
-    data = await fetchChannelMembers(channelId)
+    let data
+    try {
+      data = await fetchChannelMembers(channelId)
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+
     const members = data.channel_members
 
     members.forEach((member) => {
@@ -62,7 +80,8 @@ async function initChannelAndChannelMembers() {
     })
     return { channel: channel, members: members }
   })
-  const channelMembers = await Promise.all(promData)
+  let channelMembers = await Promise.all(promData)
+  channelMembers = channelMembers.filter(d => d !== null)
 
   channelMembers.forEach(data => {
     insertChannelAndChannelMembers(data.channel, data.members)
