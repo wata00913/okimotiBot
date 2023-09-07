@@ -41,7 +41,8 @@ async function onChangeObservedChannelsSelect(event) {
     insertChannelAndChannelMembers(channelInfo, channelMembersInfo)
     observedChannelMembers.registerChannel(channelInfo.id, channelMembersInfo, { destroy: true })
   } catch (error) {
-    console.log(error)
+    console.error(error)
+    displayView(createNoticeOrAlertMessageView('Slackチャンネル内のメンバー取得に失敗しました', true), 'notice-or-alert-message', 'beforeend')
   }
 }
 
