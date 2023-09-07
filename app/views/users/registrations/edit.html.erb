@@ -28,12 +28,23 @@
 
   <div id='observed_channels'>
     <%= label_tag :select_channel, '監視対象ユーザー',  class: 'block font-medium text-sm text-gray-700' %>
-    <%= hidden_field_tag :observed_members_attributes %>
-    <%= select_tag :select_channel,
-      options_from_collection_for_select(SlackChannel.all, 'channel_id', 'name'),
-      include_blank: true,
-      class: 'mt-1 p-2 bg-gray-100 border rounded-md focus:ring focus:ring-blue-300'
+    <% observed_channel_ids = current_user.observed_members.map do |observed_member|
+        observed_member.channel_member.slack_channel.channel_id
+      end.uniq
     %>
+    <div class="flex flex-wrap">
+      <% SlackChannel.all.each do |slack_channel| %>
+        <div>
+          <%= label_tag :select_channel, "\##{slack_channel.name}",  class: 'mr-2 block font-medium text-sm text-gray-700' %>
+          <%= check_box_tag(slack_channel.channel_id, 
+                            slack_channel.name, 
+                            observed_channel_ids.include?(slack_channel.channel_id),
+                            onclick: 'onChangeObservedChannelsCheckBox(event)')
+          %>
+        </div>
+      <% end %>
+    </div>
+    <%= hidden_field_tag :observed_members_attributes %>
   </div>
 
     <div class="mt-4 flex justify-center">

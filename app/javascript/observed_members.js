@@ -4,12 +4,10 @@ import { displayView, escapeHTML } from "./view_helper"
 let observedChannelMembers
 
 document.addEventListener("turbo:load", (_) => {
-  const observedChannelsEl = document.getElementById("select_channel")
+  const observedChannelsEl = document.getElementById("observed_channels")
 
   if (observedChannelsEl !== null) {
     observedChannelMembers = new ObservedChannelMembers()
-
-    observedChannelsEl.addEventListener('change', onChangeObservedChannelsSelect)
 
     initChannelAndChannelMembers()
     
@@ -20,14 +18,24 @@ document.addEventListener("turbo:load", (_) => {
   }
 })
 
-async function onChangeObservedChannelsSelect(event) {
+window.onChangeObservedChannelsCheckBox = async function onChangeObservedChannelsCheckBox(event) {
   const channelInfo = {
-    id: event.target.value,
-    name: event.target.options[event.target.selectedIndex].text
+    id: event.target.id,
+    name: event.target.value
+  }
+  if (channelInfo.id === '') return
+
+  const observedChannelEl = document.getElementById(getObservedChannelElId(channelInfo))
+
+  if (!event.target.checked) {
+    if (observedChannelEl === null) return
+
+    observedChannelEl.remove()
+    observedChannelMembers.deleteChannel(channelInfo.id)
+    return
   }
 
-  if (channelInfo.id === '') return
-  if (document.getElementById(getObservedChannelElId(channelInfo)) !== null) return
+  if (observedChannelEl !== null) return
 
   try {
     const data = await fetchChannelMembers(channelInfo.id)
@@ -123,14 +131,6 @@ function fetchChannelMembers(channelId) {
     })
 }
 
-// ES6でコンパイルした場合、onclickで関数を実行するとReferenceErrorが発生。
-// 実行できるようにメソッドをwindowに設定
-window.onClickObservedChannelButton = function onClickObservedChannelButton(parentEl, channelId)  {
-  parentEl.remove()
-
-  observedChannelMembers.deleteChannel(channelId)
-}
-
 function createNoticeOrAlertMessageView(message, isError) {
   let colorClass = ""
   if (isError) {
@@ -151,7 +151,6 @@ function createChannelView(channelInfo) {
     <div id="${observedChannelElId}" class="flex-col my-3">
       <div class="flex">
         <p>#${channelInfo.name}</p>
-        <button onclick="onClickObservedChannelButton(${observedChannelElId}, '${channelInfo.id}')" class="ml-5 px-4 py-1 bg-gray-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">削除</button>
       </div>
     </div>
     `
