@@ -28,7 +28,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end.flatten
     params['user']['observed_members_attributes'] = attrs
 
-    super
+    super do |resource|
+      @channels_response = SlackChannel.all if resource.errors.any?
+    end
   end
 
   protected
