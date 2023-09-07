@@ -1,4 +1,5 @@
 import { ObservedChannelMembers } from "./observed_channel_members"
+import { displayView, escapeHTML } from "./view_helper"
 
 let observedChannelMembers
 
@@ -129,11 +130,6 @@ window.onClickObservedChannelButton = function onClickObservedChannelButton(pare
   observedChannelMembers.deleteChannel(channelId)
 }
 
-function displayView(view, parentId, position) {
-  const target = document.getElementById(parentId)
-  target.insertAdjacentHTML(position, view)
-}
-
 function createNoticeOrAlertMessageView(message, isError) {
   let colorClass = ""
   if (isError) {
@@ -199,25 +195,3 @@ function getObservedChannelElId(channelInfo) {
 function getObservedChannelMemberElId(channelInfo, userInfo) {
   return `observed_channel_member_${channelInfo.id}_${userInfo.channel_member_id}`
 }
-
-function escapeHTML(strings, ...values) {
-  return strings.reduce((result, str, i) => {
-    const value = values[i - 1];
-    if (typeof value === "string") {
-      return result + escapeSpecialChars(value) + str;
-    } else {
-      return result + String(value) + str;
-    }
-  });
-}
-
-function escapeSpecialChars(str) {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
