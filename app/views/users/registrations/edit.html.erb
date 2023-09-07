@@ -30,7 +30,7 @@
     <%= label_tag :select_channel, '監視対象ユーザー',  class: 'block font-medium text-sm text-gray-700' %>
     <%= hidden_field_tag :observed_members_attributes %>
     <%= select_tag :select_channel,
-      options_from_collection_for_select(@channels_response, 'id', 'name'),
+      options_from_collection_for_select(SlackChannel.all, 'channel_id', 'name'),
       include_blank: true,
       class: 'mt-1 p-2 bg-gray-100 border rounded-md focus:ring focus:ring-blue-300'
     %>
