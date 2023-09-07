@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include SlackApiOperatable
+
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
 
   def edit
-    slack_client = Slack::Web::Client.new
-    channels_response = slack_client.conversations_list['channels']
+    operate_slack_api do |slack_client|
+      channels_response = slack_client.conversations_list['channels']
 
-    channels_response.each do |channel_response|
-      SlackChannel.find_or_create_by!(channel_id: channel_response['id']) do |channel|
-        channel.name = channel_response['name']
+      channels_response.each do |channel_response|
+        SlackChannel.find_or_create_by!(channel_id: channel_response['id']) do |channel|
+          channel.name = channel_response['name']
+        end
       end
     end
     super
