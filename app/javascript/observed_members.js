@@ -18,10 +18,34 @@ document.addEventListener("turbo:load", (_) => {
   }
 })
 
-window.onChangeObservedChannelsCheckBox = async function onChangeObservedChannelsCheckBox(event) {
+window.onClickChannelsReloadButton = async function onClickChannelsReloadButton() {
+  const response = await fetchChannels()
+  const channels = response.channels
+  const updatedAt = response.updated_at
+
+  const channelsReloadUpdatedAtEl = document.getElementById('channel-reload-updated-at')
+  channelsReloadUpdatedAtEl.textContent = updatedAt
+
+  channels.forEach((channel) => {
+    const checkBoxEl = document.getElementById(`select-channel-${channel.channel_id}`)
+    if (checkBoxEl === null) {
+      displayView(createChannelCheckBoxView(channel, false), 'channels', 'beforeend')
+    } else {
+      const labelEl = checkBoxEl.previousElementSibling
+      console.log(labelEl)
+      labelEl.textContent = `#${channel.name}`
+
+      checkBoxEl.id = getSelectChannelCheckBoxElId(channel)
+      checkBoxEl.name = getSelectChannelCheckBoxElId(channel)
+      checkBoxEl.value = channel.name
+    }
+  })
+}
+
+window.onChangeObservedChannelsCheckBox = async function onChangeObservedChannelsCheckBox(event, channelId, name) {
   const channelInfo = {
-    id: event.target.id,
-    name: event.target.value
+    id: channelId,
+    name: name
   }
   if (channelInfo.id === '') return
 
@@ -109,6 +133,17 @@ function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
   })
 }
 
+function fetchChannels() {
+  return fetch(`/api/slack_channels`)
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
+      } else {
+        return response.json()
+      }
+    })
+}
+
 function fetchObservedMembers() {
   return fetch(`/api/observed_members`)
     .then((response) => {
@@ -141,6 +176,21 @@ function createNoticeOrAlertMessageView(message, isError) {
   return escapeHTML`
     <div class="border ${colorClass} px-4 py-3 rounded relative" role="alert">
       <span class="block sm:inline">${message}</span>
+    </div>
+    `
+}
+
+function createChannelCheckBoxView(channelInfo, isChecked) {
+  const checkedStr = isChecked ? 'checked="checked"' : ''
+  return escapeHTML`
+    <div>
+      <label class="mr-2 block font-medium text-sm text-gray-700" for="select_channel">#${channelInfo.name}</label>
+      <input type="checkbox" 
+        name="select-channel-${channelInfo.channel_id}"
+        id="select-channel-${channelInfo.channel_id}"
+        value="${channelInfo.name}" onclick="onChangeObservedChannelsCheckBox(event, '${channelInfo.channel_id}', '${channelInfo.name}')"
+        ${checkedStr}
+      >
     </div>
     `
 }
@@ -194,4 +244,8 @@ function getObservedChannelElId(channelInfo) {
 
 function getObservedChannelMemberElId(channelInfo, userInfo) {
   return `observed_channel_member_${channelInfo.id}_${userInfo.channel_member_id}`
+}
+
+function getSelectChannelCheckBoxElId(channelInfo) {
+  return `select-channel-${channelInfo.channel_id}`
 }

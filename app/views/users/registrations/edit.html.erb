@@ -28,18 +28,27 @@
 
   <div id='observed_channels'>
     <%= label_tag :select_channel, '監視対象ユーザー',  class: 'block font-medium text-sm text-gray-700' %>
+    <div class="flex mt-2 mb-4">
+      <%= button_tag('チャンネル再読み込み',
+                     type: :button,
+                     class: 'px-3 py-2 h-6 mr-4 bg-blue-500 text-xs text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300',
+                     onclick: 'onClickChannelsReloadButton()')
+      %>
+      <p>更新時間：</p>
+      <p id="channel-reload-updated-at"><%= l Time.zone.now, format: :long %></p>
+    </div>
     <% observed_channel_ids = current_user.observed_members.map do |observed_member|
         observed_member.channel_member.slack_channel.channel_id
       end.uniq
     %>
-    <div class="flex flex-wrap">
+    <div id="channels" class="flex flex-wrap">
       <% SlackChannel.all.each do |slack_channel| %>
         <div>
           <%= label_tag :select_channel, "\##{slack_channel.name}",  class: 'mr-2 block font-medium text-sm text-gray-700' %>
-          <%= check_box_tag(slack_channel.channel_id, 
-                            slack_channel.name, 
+          <%= check_box_tag("select-channel-#{slack_channel.channel_id}", 
+                            "select-channel-#{slack_channel.name}", 
                             observed_channel_ids.include?(slack_channel.channel_id),
-                            onclick: 'onChangeObservedChannelsCheckBox(event)')
+                            onclick: "onChangeObservedChannelsCheckBox(event, \"#{slack_channel.channel_id}\", \"#{slack_channel.name}\")")
           %>
         </div>
       <% end %>
