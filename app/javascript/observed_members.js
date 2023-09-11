@@ -1,8 +1,12 @@
 import { ObservedChannelMembers } from "./observed_channel_members"
 import { displayView, escapeHTML } from "./view_helper"
 
+// 監視対象チャンネルと監視対象ユーザーの管理
 let observedChannelMembers
 
+/**
+ * 画面ロード時の処理
+ */
 document.addEventListener("turbo:load", (_) => {
   const observedChannelsEl = document.getElementById("observed_channels")
 
@@ -18,6 +22,59 @@ document.addEventListener("turbo:load", (_) => {
   }
 })
 
+/**
+ * 監視対象チャンネルと監視対象ユーザーが存在する場合、
+ * 画面にそれらを初期表示する
+ */
+async function initChannelAndChannelMembers() {
+  let data
+  try {
+    data = await fetchObservedMembers()
+  } catch (error) {
+    console.log(error)
+    return
+  }
+
+  const observedMembersResponse = data.observed_members
+  const promData = observedMembersResponse.map(async (channelToObservedMembers) => {
+    const channel = channelToObservedMembers.channel
+    const channelId = channel.id
+    const observedMembers = channelToObservedMembers.members
+
+    let data
+    try {
+      data = await fetchChannelMembers(channelId)
+    } catch (error) {
+      console.log(error)
+      return null
+    }
+
+    const members = data.channel_members
+
+    members.forEach((member) => {
+      const observedMember = observedMembers.find(m => m.channel_member_id === member.channel_member_id)
+      if(observedMember === undefined) {
+        member.observe = false
+      } else {
+        member.observe = true
+        member.id = observedMember.id
+      }
+    })
+    return { channel: channel, members: members }
+  })
+  let channelMembers = await Promise.all(promData)
+  channelMembers = channelMembers.filter(d => d !== null)
+
+  channelMembers.forEach(data => {
+    insertChannelAndChannelMembers(data.channel, data.members)
+    observedChannelMembers.registerChannel(data.channel.id, data.members, { destroy: false })
+  })
+}
+
+
+/**
+ * イベントハンドラー
+ */
 window.onClickChannelsReloadButton = async function onClickChannelsReloadButton() {
   const response = await fetchChannels()
   const channels = response.channels
@@ -78,50 +135,15 @@ window.onChangeObservedChannelsCheckBox = async function onChangeObservedChannel
   }
 }
 
-async function initChannelAndChannelMembers() {
-  let data
-  try {
-    data = await fetchObservedMembers()
-  } catch (error) {
-    console.log(error)
-    return
-  }
-
-  const observedMembersResponse = data.observed_members
-  const promData = observedMembersResponse.map(async (channelToObservedMembers) => {
-    const channel = channelToObservedMembers.channel
-    const channelId = channel.id
-    const observedMembers = channelToObservedMembers.members
-
-    let data
-    try {
-      data = await fetchChannelMembers(channelId)
-    } catch (error) {
-      console.log(error)
-      return null
-    }
-
-    const members = data.channel_members
-
-    members.forEach((member) => {
-      const observedMember = observedMembers.find(m => m.channel_member_id === member.channel_member_id)
-      if(observedMember === undefined) {
-        member.observe = false
-      } else {
-        member.observe = true
-        member.id = observedMember.id
-      }
-    })
-    return { channel: channel, members: members }
-  })
-  let channelMembers = await Promise.all(promData)
-  channelMembers = channelMembers.filter(d => d !== null)
-
-  channelMembers.forEach(data => {
-    insertChannelAndChannelMembers(data.channel, data.members)
-    observedChannelMembers.registerChannel(data.channel.id, data.members, { destroy: false })
-  })
+window.onClickObservedMemberCheckBox = function onClickObservedMemberCheckBox(event, channelId, accountId) {
+  observedChannelMembers.setObserve(channelId, accountId, event.target.checked)
 }
+
+function onClickSubmitButton(observedChannelMembers) {
+  const hiddenInputEl = document.getElementById('observed_members_attributes')
+  hiddenInputEl.value = JSON.stringify(observedChannelMembers.getData())
+}
+
 
 function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
 
@@ -133,39 +155,10 @@ function insertChannelAndChannelMembers(channelInfo, channelMembersInfo) {
   })
 }
 
-function fetchChannels() {
-  return fetch(`/api/slack_channels`)
-    .then((response) => {
-      if (!response.ok) {
-        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
-      } else {
-        return response.json()
-      }
-    })
-}
 
-function fetchObservedMembers() {
-  return fetch(`/api/observed_members`)
-    .then((response) => {
-      if (!response.ok) {
-        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
-      } else {
-        return response.json()
-      }
-    })
-}
-
-function fetchChannelMembers(channelId) {
-  return fetch(`/api/slack_channels/${channelId}/members`)
-    .then((response) => {
-      if (!response.ok) {
-        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
-      } else {
-        return response.json()
-      }
-    })
-}
-
+/*
+ * Viewの作成
+ */
 function createNoticeOrAlertMessageView(message, isError) {
   let colorClass = ""
   if (isError) {
@@ -206,14 +199,6 @@ function createChannelView(channelInfo) {
     `
 }
 
-window.onClickObservedMemberCheckBox = function onClickObservedMemberCheckBox(event, channelId, accountId) {
-  observedChannelMembers.setObserve(channelId, accountId, event.target.checked)
-}
-
-function onClickSubmitButton(observedChannelMembers) {
-  const hiddenInputEl = document.getElementById('observed_members_attributes')
-  hiddenInputEl.value = JSON.stringify(observedChannelMembers.getData())
-}
 
 function createUserView(channelInfo, userInfo) {
   const checkedStr = userInfo.observe ? 'checked' : ''
@@ -238,6 +223,9 @@ function createUserView(channelInfo, userInfo) {
     `
 }
 
+/**
+ * idの取得関数
+ */
 function getObservedChannelElId(channelInfo) {
   return `observed_channel_${channelInfo.id}`
 }
@@ -248,4 +236,40 @@ function getObservedChannelMemberElId(channelInfo, userInfo) {
 
 function getSelectChannelCheckBoxElId(channelInfo) {
   return `select-channel-${channelInfo.channel_id}`
+}
+
+/*
+ * API通信
+ */
+function fetchChannels() {
+  return fetch(`/api/slack_channels`)
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
+      } else {
+        return response.json()
+      }
+    })
+}
+
+function fetchObservedMembers() {
+  return fetch(`/api/observed_members`)
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
+      } else {
+        return response.json()
+      }
+    })
+}
+
+function fetchChannelMembers(channelId) {
+  return fetch(`/api/slack_channels/${channelId}/members`)
+    .then((response) => {
+      if (!response.ok) {
+        return Promise.reject(new Error(`${response.status}: ${response.statusText}`));
+      } else {
+        return response.json()
+      }
+    })
 }

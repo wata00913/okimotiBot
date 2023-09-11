@@ -1,3 +1,4 @@
+// 監視対象チャンネルと監視対象ユーザーの管理
 export class ObservedChannelMembers {
   constructor() {
     this.data = []
