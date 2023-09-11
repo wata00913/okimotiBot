@@ -20,5 +20,16 @@ class MessagesController < ApplicationController
     return unless search_params
 
     @messages = @messages.public_send("best_#{search_params[:best_emotion]}") unless search_params[:best_emotion].blank?
+
+    set_message_during(Time.zone.parse(search_params['start_at']), Time.zone.parse(search_params['end_at']))
+  end
+
+  def set_message_during(start_at, end_at)
+    return if start_at.nil? && end_at.nil?
+
+    # nilの場合はそのままnilとして扱う
+    start_timestamp = start_at&.to_f
+    end_timestamp = end_at&.to_f
+    @messages = @messages.where(slack_timestamp: start_timestamp..end_timestamp)
   end
 end

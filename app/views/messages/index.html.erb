@@ -2,6 +2,8 @@
     <div class="container mx-auto">
       <%= form_with scope: :message, url: messages_path, method: :get do |f| %>
         <%= f.select :best_emotion, SentimentScore::ICON_TYPE.invert, include_blank: true %>
+        <%= f.datetime_field :start_at %>
+        <%= f.datetime_field :end_at %>
         <%= f.submit '検索', class: "px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300" %>
       <% end %>
       <%= render partial: 'message', collection: @messages %>
