@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::SlackChannelsController < ActionController::API
-  include SlackApiOperatable
+  include SlackClient
 
   def index
     operate_slack_api do |slack_client|

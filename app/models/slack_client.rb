@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require 'active_support/concern'
-
-module SlackApiOperatable
-  extend ActiveSupport::Concern
+class SlackClient
+  def initialize
+    @client = Slack::Web::Client.new
+  end
 
   def operate_slack_api
-    @client ||= Slack::Web::Client.new
     begin
       @client.auth_test
       yield @client

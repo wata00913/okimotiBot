@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Api::SlackChannels::MembersController < ActionController::API
-  include SlackApiOperatable
+  include SlackClient
 
   def index
     channel_id = params[:slack_channel_id]
