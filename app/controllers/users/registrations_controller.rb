@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  include SlackClient
-
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
+  before_action :set_slack_client, only: [:edit]
 
   def edit
-    operate_slack_api do |slack_client|
+    @slack_client.operate_slack_api do |slack_client|
       channels_response = slack_client.conversations_list['channels']
 
       channels_response.each do |channel_response|
@@ -70,4 +69,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  private
+
+  def set_slack_client
+    @slack_client = SlackClient.new
+  end
 end
