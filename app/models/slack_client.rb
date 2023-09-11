@@ -15,4 +15,8 @@ class SlackClient
       false
     end
   end
+
+  def fetch_channels
+    @client.conversations_list['channels']
+  end
 end
