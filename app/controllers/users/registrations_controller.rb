@@ -6,7 +6,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :set_user_observed_members_attributes, only: [:update]
 
   def edit
-    SlackChannel.fetch_by_api_and_create!
+    begin
+      SlackChannel.fetch_by_api_and_create!
+    rescue Slack::Web::Api::Errors::NotAuthed
+      flash[:alert] = 'SlackAPIの認証に失敗しました。'
+    rescue Slack::Web::Api::Errors::TimeoutError
+      flash[:alert] = 'Slackチャンネルの取得に失敗しました。'
+    end
     super
   end
 
