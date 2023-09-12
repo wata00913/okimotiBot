@@ -8,11 +8,14 @@ class SlackAccount < ApplicationRecord
   validates :name, presence: true
 
   class << self
-    def fetch_by_api_and_create!(account_id)
-      account_response = SlackClient.new.fetch_account(account_id)
-      SlackAccount.find_or_create_by!(account_id: account_response['id']) do |account|
-        account.name = account_response['real_name']
-        account.image_url = account_response['profile']['image_original']
+    def find_or_create_by_attr!(attr, account_id_key: :account_id, name_key: :name, image_url_key: :image_url)
+      account_id = find_attr_value(attr, account_id_key)
+      name = find_attr_value(attr, name_key)
+      image_url = find_attr_value(attr, image_url_key)
+
+      find_or_create_by!(account_id:) do |account|
+        account.name = name
+        account.image_url = image_url
       end
     end
   end

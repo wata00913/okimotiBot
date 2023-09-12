@@ -8,21 +8,19 @@ class SlackChannel < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   class << self
-    def fetch_by_api_and_create!
-      channels_response = SlackClient.new.fetch_channels
+    def find_or_create_by_attr!(attr, channel_id_key: :channel_id, name_key: :name)
+      channel_id = find_attr_value(attr, channel_id_key)
+      name = find_attr_value(attr, name_key)
 
-      channels_response.each do |channel_response|
-        find_or_create_by!(channel_id: channel_response['id']) do |channel|
-          channel.name = channel_response['name']
-        end
+      find_or_create_by!(channel_id:) do |channel|
+        channel.name = name
       end
     end
   end
 
-  def fetch_members_and_create!
-    member_ids_response = SlackClient.new.fetch_member_ids_in(channel_id)
-    member_ids_response.map do |account_id|
-      member = SlackAccount.fetch_by_api_and_create!(account_id)
+  def find_or_create_members_by_attrs!(attrs, account_id_key: :account_id, name_key: :name, image_url_key: :image_url)
+    attrs.map do |attr|
+      member = SlackAccount.find_or_create_by_attr!(attr, account_id_key:, name_key:, image_url_key:)
       accounts << member unless accounts.exists?(member.id)
     end
   end
