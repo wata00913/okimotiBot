@@ -3,24 +3,10 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
+  before_action :set_user_observed_members_attributes, only: [:update]
 
   def edit
     SlackChannel.fetch_by_api_and_create!
-    super
-  end
-
-  def update
-    attrs = JSON.parse(params[:observed_members_attributes]).map do |channel_members_param|
-      channel_members_param['members'].map do |channel_member|
-        attr = { 'user_id' => current_user.id,
-                 'channel_member_id' => channel_member['channel_member_id'] }
-        attr['id'] = channel_member['id'] if channel_member.key?('id')
-        attr['_destroy'] = true unless channel_member['observe']
-        attr
-      end
-    end.flatten
-    params['user']['observed_members_attributes'] = attrs
-
     super
   end
 
@@ -60,4 +46,19 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  private
+
+  def set_user_observed_members_attributes
+    attrs = JSON.parse(params[:observed_members_attributes]).map do |channel_members_param|
+      channel_members_param['members'].map do |channel_member|
+        attr = { 'user_id' => current_user.id,
+                 'channel_member_id' => channel_member['channel_member_id'] }
+        attr['id'] = channel_member['id'] if channel_member.key?('id')
+        attr['_destroy'] = true unless channel_member['observe']
+        attr
+      end
+    end.flatten
+    params['user']['observed_members_attributes'] = attrs
+  end
 end
