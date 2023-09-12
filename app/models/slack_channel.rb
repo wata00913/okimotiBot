@@ -18,4 +18,12 @@ class SlackChannel < ApplicationRecord
       end
     end
   end
+
+  def fetch_members_and_create!
+    member_ids_response = SlackClient.new.fetch_member_ids_in(channel_id)
+    member_ids_response.map do |account_id|
+      member = SlackAccount.fetch_by_api_and_create!(account_id)
+      accounts << member unless accounts.exists?(member.id)
+    end
+  end
 end
