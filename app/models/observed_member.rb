@@ -7,4 +7,7 @@ class ObservedMember < ApplicationRecord
 
   validates :user_id, presence: true, uniqueness: { scope: :channel_member_id }
   validates :channel_member_id, presence: true
+
+  delegate :slack_channel, to: :channel_member
+  delegate :slack_account, to: :channel_member
 end
