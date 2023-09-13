@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'slack_client'
+
 class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
