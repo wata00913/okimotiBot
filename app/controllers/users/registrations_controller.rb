@@ -6,8 +6,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   before_action :set_user_observed_members_attributes, only: [:update]
 
   def edit
-    slack_client = SlackClient.new
-
     begin
       channels_response = slack_client.fetch_channels
       channels_response.each do |channel_response|

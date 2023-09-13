@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-class Api::SlackChannelsController < ActionController::API
+class Api::SlackChannelsController < Api::ApplicationController
   include SlackApiErrorHandler
 
   def index
-    slack_client = SlackClient.new
     channels_response = slack_client.fetch_channels
 
     channels_response.each do |channel_response|

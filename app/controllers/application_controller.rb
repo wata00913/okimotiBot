@@ -26,4 +26,8 @@ class ApplicationController < ActionController::Base
   def require_sign_in
     redirect_to new_user_session_path, alert: 'ログインしてください。' unless user_signed_in?
   end
+
+  def slack_client
+    @slack_client ||= SlackClient.new
+  end
 end

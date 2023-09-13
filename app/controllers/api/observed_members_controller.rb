@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::ObservedMembersController < ActionController::API
+class Api::ObservedMembersController < Api::ApplicationController
   include SlackApiErrorHandler
 
   def index
