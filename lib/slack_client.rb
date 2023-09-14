@@ -9,7 +9,7 @@ class SlackClient
     @client.conversations_list['channels']
   end
 
-  def fetch_member_ids_in(channel_id)
+  def fetch_member_ids(channel_id)
     @client.conversations_members(channel: channel_id)['members']
   end
 

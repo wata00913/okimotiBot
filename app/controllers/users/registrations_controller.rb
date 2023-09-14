@@ -3,7 +3,7 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
-  before_action :set_user_observed_members_attributes, only: [:update]
+  before_action :set_observed_members_attributes, only: [:update]
 
   def edit
     begin
@@ -58,7 +58,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   private
 
-  def set_user_observed_members_attributes
+  def set_observed_members_attributes
     attrs = JSON.parse(params[:observed_members_attributes]).map do |channel_members_param|
       channel_members_param['members'].map do |channel_member|
         attr = { 'user_id' => current_user.id,

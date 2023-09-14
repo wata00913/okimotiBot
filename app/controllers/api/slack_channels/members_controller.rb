@@ -6,7 +6,7 @@ class Api::SlackChannels::MembersController < Api::ApplicationController
   def index
     channel_id = params[:slack_channel_id]
 
-    member_ids_response = slack_client.fetch_member_ids_in(channel_id)
+    member_ids_response = slack_client.fetch_member_ids(channel_id)
 
     members_response = member_ids_response.map { |id| slack_client.fetch_account(id) }
     @channel = SlackChannel.find_by(channel_id:)

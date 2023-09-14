@@ -1,4 +1,4 @@
-json.observed_members @channel_to_observed_members.each do |channel, observed_members|
+json.observed_members @observed_members.each do |channel, observed_members|
   json.channel do
     json.id channel.channel_id
     json.name channel.name
