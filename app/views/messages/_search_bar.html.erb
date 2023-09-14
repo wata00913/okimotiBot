@@ -1,8 +1,11 @@
 <%= form_with scope: :message, url: messages_path, method: :get do |f| %>
   <div id="select-observed-members">
     <%= hidden_field_tag :selected_observed_member_ids %>
+    <div class="flex flex-wrap">
     <% current_user.channel_to_observed_members.each do |channel, observed_members| %>
+      <div class="flex flex-col">
       <p><%= "\##{channel.name}" %></p>
+        <div class="flex items-center">
       <% observed_members.each do |observed_member| %>
         <p><%= "#{observed_member.slack_account.name}" %></p>
         <%= check_box_tag("select-observed-member-#{observed_member.id}",
@@ -11,7 +14,10 @@
                           onclick: 'onClickSearchObservedMemberCheckBox(event)')
         %>
       <% end %>
+        </div>
+      </div>
     <% end %>
+    </div>
   </div>
   <%= f.select :best_emotion, SentimentScore::ICON_TYPE.invert, include_blank: true %>
   <%= f.datetime_field :start_at %>
