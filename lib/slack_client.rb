@@ -9,6 +9,11 @@ class SlackClient
     @client.conversations_list['channels']
   end
 
+  def fetch_channel_members(channel_id)
+    member_ids_response = @client.conversations_members(channel: channel_id)['members']
+    member_ids_response.map { |id| fetch_account(id) }
+  end
+
   def fetch_member_ids(channel_id)
     @client.conversations_members(channel: channel_id)['members']
   end
