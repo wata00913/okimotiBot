@@ -7,12 +7,12 @@
       <p><%= "\##{channel.name}" %></p>
         <div class="flex items-center">
       <% observed_members.each do |observed_member| %>
-        <p><%= "#{observed_member.slack_account.name}" %></p>
         <%= check_box_tag("select-observed-member-#{observed_member.id}",
                           observed_member.id,
                           false,
                           onclick: 'onClickSearchObservedMemberCheckBox(event)')
         %>
+        <p><%= "#{observed_member.slack_account.name}" %></p>
       <% end %>
         </div>
       </div>
