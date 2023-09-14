@@ -8,6 +8,12 @@ class SlackChannel < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   class << self
+    def find_or_create_by_attrs!(attrs, channel_id_key: :channel_id, name_key: :name)
+      attrs.each do |attr|
+        find_or_create_by_attr!(attr, channel_id_key:, name_key:)
+      end
+    end
+
     def find_or_create_by_attr!(attr, channel_id_key: :channel_id, name_key: :name)
       channel_id = find_attr_value(attr, channel_id_key)
       name = find_attr_value(attr, name_key)
