@@ -1,5 +1,6 @@
 <%= form_with scope: :message, url: messages_path, method: :get do |f| %>
   <div id="select-observed-members" class="py-4">
+    <p>監視対象ユーザー</p>
     <%= hidden_field_tag :selected_observed_member_ids %>
     <div class="flex flex-wrap gap-x-3">
     <% current_user.channel_to_observed_members.each do |channel, observed_members| %>
@@ -19,13 +20,20 @@
     <% end %>
     </div>
   </div>
-  <div class="flex items-center">
+  <div class="flex items-center ml-2 gap-x-3">
     <div>
-  <%= f.select :best_emotion, SentimentScore::ICON_TYPE.invert, include_blank: true %>
+      <p>感情</p>
+      <%= f.select :best_emotion, SentimentScore::ICON_TYPE.invert, include_blank: true %>
     </div>
-    <div>
-  <%= f.datetime_field :start_at %>
-  <%= f.datetime_field :end_at %>
+    <div class="flex items-center gap-x-3">
+      <div>
+        <p>投稿日時：from</p>
+        <%= f.datetime_field :start_at %>
+      </div>
+      <div>
+        <p>投稿日時：to</p>
+        <%= f.datetime_field :end_at %>
+      </div>
     </div>
   <%= f.submit '検索', class: "px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300" %>
   </div>
