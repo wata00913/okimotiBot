@@ -2,7 +2,7 @@
 
 class MessagesController < ApplicationController
   before_action :require_sign_in
-  before_action :set_selected_observed_member_ids_param, only: :index
+  before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
   def index
     @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
@@ -19,12 +19,14 @@ class MessagesController < ApplicationController
 
   private
 
-  def set_search_messages
-    search_params = params[:message]
+  def set_search_params
+    @search_params = params[:message]
+  end
 
-    set_search_messages_where_best_emotion(search_params[:best_emotion])
-    set_search_messages_where_observed_members(search_params[:selected_observed_member_ids])
-    set_search_messages_during(Time.zone.parse(search_params[:start_at]), Time.zone.parse(search_params[:end_at]))
+  def set_search_messages
+    set_search_messages_where_best_emotion(@search_params[:best_emotion])
+    set_search_messages_where_observed_members(@search_params[:selected_observed_member_ids])
+    set_search_messages_during(Time.zone.parse(@search_params[:start_at]), Time.zone.parse(@search_params[:end_at]))
   end
 
   def set_search_messages_where_best_emotion(type)
@@ -48,9 +50,8 @@ class MessagesController < ApplicationController
   end
 
   def set_selected_observed_member_ids_param
-    search_params = params[:message]
-    return unless search_params
+    return unless @search_params
 
-    params[:message][:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
+    @search_params[:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
   end
 end
