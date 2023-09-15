@@ -9,6 +9,7 @@ gem 'bootsnap', require: false
 gem 'cssbundling-rails', '~> 1.2'
 gem 'devise', '~> 4.9'
 gem 'devise-i18n', '~> 1.11'
+gem 'discard'
 gem 'jbuilder'
 gem 'jsbundling-rails'
 gem 'kaminari'
