@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SlackChannel < ApplicationRecord
+  include Discard::Model
+
   has_many :channel_members, dependent: :destroy
   has_many :accounts, through: :channel_members, source: :slack_account
 
