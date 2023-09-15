@@ -61,15 +61,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def set_observed_members_attributes
-    attrs = JSON.parse(params[:observed_members_attributes]).map do |channel_members_param|
-      channel_members_param['members'].map do |channel_member|
-        attr = { 'user_id' => current_user.id,
-                 'channel_member_id' => channel_member['channel_member_id'] }
-        attr['id'] = channel_member['id'] if channel_member.key?('id')
-        attr['_destroy'] = true unless channel_member['observe']
-        attr
-      end
-    end.flatten
-    params['user']['observed_members_attributes'] = attrs
+    params['user']['observed_members_attributes'] = ObservedMember.convert_params_to_attributes(current_user.id, JSON.parse(params[:observed_members_attributes]))
   end
 end
