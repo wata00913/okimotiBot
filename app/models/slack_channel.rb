@@ -9,6 +9,10 @@ class SlackChannel < ApplicationRecord
   validates :channel_id, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: true
 
+  default_scope -> { kept }
+
+  scope :will_deleted, ->(current_channel_ids) { where.not(channel_id: current_channel_ids) }
+
   class << self
     def find_or_create_by_attrs!(attrs, channel_id_key: :channel_id, name_key: :name)
       attrs.each do |attr|

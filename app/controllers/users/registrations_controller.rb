@@ -8,6 +8,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def edit
     begin
       channels_response = slack_client.fetch_channels
+
+      channel_ids = channels_response.map(&:id)
+      SlackChannel.will_deleted(channel_ids).discard_all
+
       channels_response.each do |channel_response|
         SlackChannel.find_or_create_by_attr!(channel_response, channel_id_key: :id)
       end
