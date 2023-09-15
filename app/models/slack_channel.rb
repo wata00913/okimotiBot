@@ -13,6 +13,10 @@ class SlackChannel < ApplicationRecord
 
   scope :will_deleted, ->(current_channel_ids) { where.not(channel_id: current_channel_ids) }
 
+  after_discard do
+    channel_members.destroy_all
+  end
+
   class << self
     def find_or_create_by_attrs!(attrs, channel_id_key: :channel_id, name_key: :name)
       attrs.each do |attr|
