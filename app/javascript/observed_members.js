@@ -76,9 +76,14 @@ async function initChannelAndChannelMembers() {
  * イベントハンドラー
  */
 window.onClickChannelsReloadButton = async function onClickChannelsReloadButton() {
+  const checkboxesEl = document.querySelectorAll("#channels input[type=checkbox]")
+  const oldChannelIds = []
+  checkboxesEl.forEach(checkboxEl => oldChannelIds.push(checkboxEl.value))
+
   const response = await fetchChannels()
   const channels = response.channels
   const updatedAt = response.updated_at
+  const currentChannelIds = channels.map(c => c.channel_id)
 
   const channelsReloadUpdatedAtEl = document.getElementById('channel-reload-updated-at')
   channelsReloadUpdatedAtEl.textContent = updatedAt
@@ -96,6 +101,21 @@ window.onClickChannelsReloadButton = async function onClickChannelsReloadButton(
       checkBoxEl.name = getSelectChannelCheckBoxElId(channel)
       checkBoxEl.value = channel.name
     }
+  })
+
+  const willDeletedChannelIds = new Set(oldChannelIds)
+  currentChannelIds.forEach(currentId => willDeletedChannelIds.delete(currentId))
+  willDeletedChannelIds.forEach((channelId) => {
+    const checkBoxEl = document.getElementById(`select-channel-${channelId}`)
+    if (checkBoxEl.checked) {
+      // チェックボックスをオフにして監視対象ユーザーの選択領域を削除する
+      checkBoxEl.checked = false
+      const event = new Event('change')
+      checkBoxEl.dispatchEvent(event)
+
+      observedChannelMembers.deleteChannel(channelId)
+    }
+    checkBoxEl.parentElement.remove()
   })
 }
 
