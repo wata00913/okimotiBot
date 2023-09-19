@@ -12,7 +12,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       SlackChannel.will_deleted(channel_ids).discard_all
 
       SlackChannel.create_channels(channels_response)
-    rescue Slack::Web::Api::Errors::NotAuthed
+    rescue Slack::Web::Api::Errors::NotAuthed, Slack::Web::Api::Errors::InvalidAuth
       flash[:alert] = 'SlackAPIの認証に失敗しました。'
     rescue Slack::Web::Api::Errors::TimeoutError
       flash[:alert] = 'Slackチャンネルの取得に失敗しました。'
