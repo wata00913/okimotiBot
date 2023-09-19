@@ -18,9 +18,9 @@ class SlackChannel < ApplicationRecord
   end
 
   class << self
-    def find_or_create_by_attrs!(attrs, channel_id_key: :channel_id, name_key: :name)
-      attrs.each do |attr|
-        find_or_create_by_attr!(attr, channel_id_key:, name_key:)
+    def create_channels(channels_response)
+      channels_response.each do |channel_response|
+        find_or_create_by_attr!(channel_response, channel_id_key: :id)
       end
     end
 
@@ -32,6 +32,10 @@ class SlackChannel < ApplicationRecord
         channel.name = name
       end
     end
+  end
+
+  def create_members(members_response)
+    find_or_create_members_by_attrs!(members_response, account_id_key: :id, name_key: :real_name, image_url_key: %i[profile image_original])
   end
 
   def find_or_create_members_by_attrs!(attrs, account_id_key: :account_id, name_key: :name, image_url_key: :image_url)
