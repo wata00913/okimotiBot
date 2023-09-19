@@ -5,6 +5,8 @@ class MessagesController < ApplicationController
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
   def index
+    collect_messages
+
     @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
                        .order(slack_timestamp: :desc)
                        .page(params[:page])
@@ -53,5 +55,16 @@ class MessagesController < ApplicationController
     return unless @search_params
 
     @search_params[:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
+  end
+
+  def collect_messages
+    observed_members = current_user.build_observed_members
+
+    observed_members.each do |channel, members|
+      member_ids = members.map { |m| m.slack_account.account_id }
+      messages_response = slack_client.fetch_channel_members_messages(channel.channel_id, member_ids)
+
+      ChannelMember.create_messages(messages_response, channel)
+    end
   end
 end
