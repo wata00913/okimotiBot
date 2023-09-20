@@ -11,6 +11,8 @@ class ObservedMember < ApplicationRecord
   delegate :slack_channel, to: :channel_member
   delegate :slack_account, to: :channel_member
 
+  default_scope -> { joins(:channel_member) }
+
   class << self
     def convert_params_to_attributes(user_id, observed_member_params)
       observed_member_params.map do |observed_member_param|

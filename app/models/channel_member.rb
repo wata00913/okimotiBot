@@ -13,4 +13,6 @@ class ChannelMember < ApplicationRecord
 
   validates :slack_channel_id, presence: true, uniqueness: { scope: :slack_account_id }
   validates :slack_account_id, presence: true
+
+  default_scope -> { kept }
 end
