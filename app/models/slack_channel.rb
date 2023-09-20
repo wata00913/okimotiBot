@@ -14,7 +14,7 @@ class SlackChannel < ApplicationRecord
   scope :will_deleted, ->(current_channel_ids) { where.not(channel_id: current_channel_ids) }
 
   after_discard do
-    channel_members.destroy_all
+    channel_members.discard_all
   end
 
   class << self
