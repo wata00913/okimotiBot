@@ -42,12 +42,12 @@
       end.uniq
     %>
     <div id="channels" class="flex flex-wrap">
-      <% SlackChannel.all.each do |slack_channel| %>
+      <% @slack_channels.each do |slack_channel| %>
         <div>
           <%= label_tag :select_channel, "\##{slack_channel.name}",  class: 'mr-2 block font-medium text-sm text-gray-700' %>
           <%= check_box_tag("select-channel-#{slack_channel.channel_id}", 
                             slack_channel.channel_id, 
-                            observed_channel_ids.include?(slack_channel.channel_id),
+                            checked?(@observed_channel_ids, slack_channel.channel_id),
                             onchange: "onChangeObservedChannelsCheckBox(event, \"#{slack_channel.channel_id}\", \"#{slack_channel.name}\")")
           %>
         </div>
