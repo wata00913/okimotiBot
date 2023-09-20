@@ -26,4 +26,8 @@ class Message < ApplicationRecord
       maximum(:slack_timestamp)
     end
   end
+
+  def escape_original_message
+    Slack::Messages::Formatting.unescape(original_message)
+  end
 end
