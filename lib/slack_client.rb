@@ -14,8 +14,10 @@ class SlackClient
     member_ids_response.map { |id| fetch_account(id) }
   end
 
-  def fetch_channel_members_messages(channel_id, member_ids)
-    messages_response = @client.conversations_history(channel: channel_id)
+  def fetch_channel_members_messages(channel_id, member_ids, from: nil, to: nil)
+    options = { oldest: from, latest: to }.compact
+
+    messages_response = @client.conversations_history(channel: channel_id, **options)
     messages_response['messages'].filter do |message_response|
       message_response['type'] == 'message' \
         && message_response['subtype'].nil? \

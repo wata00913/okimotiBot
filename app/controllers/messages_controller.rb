@@ -62,7 +62,8 @@ class MessagesController < ApplicationController
 
     observed_members.each do |channel, members|
       member_ids = members.map { |m| m.slack_account.account_id }
-      messages_response = slack_client.fetch_channel_members_messages(channel.channel_id, member_ids)
+      from = Message.channel_messages(channel).latest_slack_timestamp
+      messages_response = slack_client.fetch_channel_members_messages(channel.channel_id, member_ids, from:)
 
       ChannelMember.create_messages(messages_response, channel)
     end

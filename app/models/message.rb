@@ -19,4 +19,11 @@ class Message < ApplicationRecord
                          joins(:sentiment_score)
                            .where('sentiment_scores.neutral > sentiment_scores.negative
                                    and sentiment_scores.neutral > sentiment_scores.positive') }
+  scope :channel_messages, ->(channel) { where(channel_member_id: channel.channel_member_ids) }
+
+  class << self
+    def latest_slack_timestamp
+      maximum(:slack_timestamp)
+    end
+  end
 end
