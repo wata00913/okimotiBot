@@ -30,7 +30,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
       flash['errors'] = user.errors.full_messages
 
-      # 前の入力状態を復元するのが難しいためリダイレクトさせる
+      # 更新失敗のケースでrenderを使い設定画面を再反映する場合、
+      # 前回ユーザーが入力した監視対象ユーザーのON/OFFスイッチの状態を引き継ぐことが困難。
+      # そのためリダイレクトで対応する。
+      # JSで実装した「監視対象ユーザーの表示処理」をTurboで置き換えた場合、このアクションの上書きは不要になる
       redirect_to edit_user_registration_path
 
       return
