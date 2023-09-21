@@ -7,12 +7,18 @@ class MessagesController < ApplicationController
   def index
     set_messages
 
-    set_search_messages if params[:message]
+    if params[:message]
+      set_search_messages
+    else
+      @messages = @messages.merge(current_user.observed_members_messages)
+    end
   end
 
   def reload_messages
     collect_messages
     set_messages
+
+    @messages = @messages.merge(current_user.observed_members_messages)
 
     render :index
   end
@@ -33,11 +39,8 @@ class MessagesController < ApplicationController
     @messages = @messages.public_send("best_#{type}") if type.present?
   end
 
-  def set_search_messages_where_observed_members(ids)
-    return if ids.empty?
-
-    channel_member_ids = current_user.observed_members.where(id: ids)
-    @messages = @messages.where(channel_member_id: channel_member_ids)
+  def set_search_messages_where_observed_members(observed_member_ids)
+    @messages = @messages.merge(current_user.observed_members_messages(observed_member_ids))
   end
 
   def set_search_messages_during(start_at, end_at)
@@ -56,10 +59,10 @@ class MessagesController < ApplicationController
   end
 
   def set_messages
-    @messages = current_user.observed_members_messages
-                            .includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
-                            .order(slack_timestamp: :desc)
-                            .page(params[:page])
+    @messages = Message.all
+                       .includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
+                       .order(slack_timestamp: :desc)
+                       .page(params[:page])
   end
 
   def collect_messages
