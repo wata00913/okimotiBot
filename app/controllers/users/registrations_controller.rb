@@ -7,11 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def edit
     begin
       channels_response = slack_client.fetch_channels
-
-      channel_ids = channels_response.map(&:id)
-      SlackChannel.will_deleted(channel_ids).discard_all
-
-      SlackChannel.create_channels(channels_response)
+      SlackChannel.update_channels(channels_response)
     rescue Slack::Web::Api::Errors::NotAuthed, Slack::Web::Api::Errors::InvalidAuth
       flash[:alert] = 'SlackAPIの認証に失敗しました。'
     rescue Slack::Web::Api::Errors::TimeoutError

@@ -5,11 +5,8 @@ class Api::SlackChannelsController < Api::ApplicationController
 
   def index
     channels_response = slack_client.fetch_channels
+    SlackChannel.update_channels(channels_response)
 
-    channel_ids = channels_response.map(&:id)
-    SlackChannel.will_deleted(channel_ids).discard_all
-
-    SlackChannel.create_channels(channels_response)
     @updated_at = Time.zone.now
   end
 end

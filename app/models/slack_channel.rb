@@ -18,6 +18,13 @@ class SlackChannel < ApplicationRecord
   end
 
   class << self
+    def update_channels(channels_response)
+      channel_ids = channels_response.map(&:id)
+      will_deleted(channel_ids).discard_all
+
+      create_channels(channels_response)
+    end
+
     def create_channels(channels_response)
       channels_response.each do |channel_response|
         create_channel(channel_response)
