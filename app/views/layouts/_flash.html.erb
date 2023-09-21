@@ -10,4 +10,14 @@
       <span class="block sm:inline"> <%= alert %> </span>
     </div>
   <% end %>
+
+  <% if flash['errors'] %>
+    <div id="error_explanation" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert" data-turbo-cache="false">
+      <ul class="list-disc pl-8">
+        <% flash['errors'].each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>

@@ -24,6 +24,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
     super
   end
 
+  def update
+    super do |user|
+      next if user.errors.empty?
+
+      set_minimum_password_length
+      flash['errors'] = user.errors.full_messages
+
+      # 前の入力状態を復元するのが難しいためリダイレクトさせる
+      redirect_to edit_user_registration_path
+
+      return
+    end
+  end
+
   protected
 
   def configure_account_update_params
