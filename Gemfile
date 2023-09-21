@@ -5,6 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.1.4'
 
+gem 'active_decorator'
 gem 'bootsnap', require: false
 gem 'cssbundling-rails', '~> 1.2'
 gem 'devise', '~> 4.9'
