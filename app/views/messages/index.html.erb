@@ -6,6 +6,9 @@
         </div>
         <%= render partial: 'search_bar' %>
       </div>
+      <% if @messages.empty? %>
+        <p class="text-center">投稿メッセージが存在しません。</p>
+      <% end %>
       <%= render partial: 'message', collection: @messages %>
       <div class="flex justify-center my-8">
         <%= paginate @messages %>
