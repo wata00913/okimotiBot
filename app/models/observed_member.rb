@@ -15,8 +15,9 @@ class ObservedMember < ApplicationRecord
 
   class << self
     def convert_params_to_attributes(user_id, observed_member_params)
-      observed_member_params.map do |observed_member_param|
-        observed_member_param['members'].map do |observed_member|
+      parsed_params = JSON.parse(observed_member_params)
+      parsed_params.map do |parsed_param|
+        parsed_param['members'].map do |observed_member|
           attr = { 'user_id' => user_id,
                    'channel_member_id' => observed_member['channel_member_id'] }
           attr['id'] = observed_member['id'] if observed_member.key?('id')

@@ -61,6 +61,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def set_observed_members_attributes
-    params['user']['observed_members_attributes'] = ObservedMember.convert_params_to_attributes(current_user.id, JSON.parse(params[:observed_members_attributes]))
+    params['user']['observed_members_attributes'] = ObservedMember.convert_params_to_attributes(current_user.id, params[:observed_members_attributes])
   end
 end
