@@ -7,4 +7,24 @@ class ObservedMember < ApplicationRecord
 
   validates :user_id, presence: true, uniqueness: { scope: :channel_member_id }
   validates :channel_member_id, presence: true
+
+  delegate :slack_channel, to: :channel_member
+  delegate :slack_account, to: :channel_member
+
+  default_scope -> { joins(:channel_member) }
+
+  class << self
+    def convert_params_to_attributes(user_id, observed_member_params)
+      parsed_params = JSON.parse(observed_member_params)
+      parsed_params.map do |parsed_param|
+        parsed_param['members'].map do |observed_member|
+          attr = { 'user_id' => user_id,
+                   'channel_member_id' => observed_member['channel_member_id'] }
+          attr['id'] = observed_member['id'] if observed_member.key?('id')
+          attr['_destroy'] = true unless observed_member['observe']
+          attr
+        end
+      end.flatten
+    end
+  end
 end

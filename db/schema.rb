@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_28_032332) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_20_012727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_032332) do
     t.bigint "slack_account_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
+    t.index ["discarded_at"], name: "index_channel_members_on_discarded_at"
     t.index ["slack_channel_id", "slack_account_id"], name: "index_channel_members_on_slack_channel_id_and_slack_account_id", unique: true
   end
 
@@ -64,7 +66,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_28_032332) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["channel_id"], name: "index_slack_channels_on_channel_id", unique: true
+    t.index ["discarded_at"], name: "index_slack_channels_on_discarded_at"
     t.index ["name"], name: "index_slack_channels_on_name", unique: true
   end
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'slack_client'
+
 class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -25,5 +27,9 @@ class ApplicationController < ActionController::Base
 
   def require_sign_in
     redirect_to new_user_session_path, alert: 'ログインしてください。' unless user_signed_in?
+  end
+
+  def slack_client
+    @slack_client ||= SlackClient.new
   end
 end

@@ -1,0 +1,70 @@
+<h2 class="text-2xl font-semibold mb-4">設定</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "users/shared/error_messages", resource: resource %>
+
+  <div class="mb-4">
+    <%= f.label :name, class: "block font-medium text-sm text-gray-700" %>
+    <%= f.text_field :name, class: "mt-1 p-2 w-full bg-gray-100 border rounded-md focus:ring focus:ring-blue-300" %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :email, class: "block font-medium text-sm text-gray-700" %>
+    <%= f.email_field :email, class: "mt-1 p-2 w-full bg-gray-100 border rounded-md focus:ring focus:ring-blue-300", autofocus: true, autocomplete: "email" %>
+  </div>
+
+  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+    <div><%= t('.currently_waiting_confirmation_for_email', email: resource.unconfirmed_email) %></div>
+  <% end %>
+  <div class="mb-4">
+    <%= f.label 'パスワード(空欄の場合は変更しません)', class: "block font-medium text-sm text-gray-700" %>
+    <%= f.password_field :password, class: "mt-1 p-2 w-full bg-gray-100 border rounded-md focus:ring focus:ring-blue-300", autocomplete: "current-password" %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :password_confirmation, class: "block font-medium text-sm text-gray-700" %>
+    <%= f.password_field :password_confirmation, class: "mt-1 p-2 w-full bg-gray-100 border rounded-md focus:ring focus:ring-blue-300", autocomplete: "new-password" %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :current_password, class: 'block font-medium text-sm text-gray-700' %>
+    <%= f.password_field :current_password, class: 'mt-1 p-2 w-full bg-gray-100 border rounded-md focus:ring focus:ring-blue-300', autocomplete: "current-password" %>
+  </div>
+
+  <div id='observed_channels'>
+    <%= label_tag :select_channel, '監視対象ユーザー',  class: 'block font-medium text-sm text-gray-700' %>
+    <div class="flex mt-2 mb-4">
+      <%= button_tag('チャンネル再読み込み',
+                     type: :button,
+                     class: 'flex items-center px-3 py-2 h-6 mr-4 bg-blue-500 text-xs text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300',
+                     onclick: 'onClickChannelsReloadButton()')
+      %>
+      <p>更新時間：</p>
+      <p id="channel-reload-updated-at"><%= @channels_reload_updated_at %></p>
+    </div>
+    <% observed_channel_ids = current_user.observed_members.map do |observed_member|
+        observed_member.channel_member.slack_channel.channel_id
+      end.uniq
+    %>
+    <div id="channels" class="flex flex-wrap">
+      <% @slack_channels.each do |slack_channel| %>
+        <div>
+          <%= label_tag :select_channel, "\##{slack_channel.name}",  class: 'mr-2 block font-medium text-sm text-gray-700' %>
+          <%= check_box_tag("select-channel-#{slack_channel.channel_id}", 
+                            slack_channel.channel_id, 
+                            checked?(@observed_channel_ids, slack_channel.channel_id),
+                            onchange: "onChangeObservedChannelsCheckBox(event, \"#{slack_channel.channel_id}\", \"#{slack_channel.name}\")")
+          %>
+        </div>
+      <% end %>
+    </div>
+    <%= hidden_field_tag :observed_members%>
+  </div>
+
+    <div class="mt-4 flex justify-center">
+      <div class="actions">
+        <%= f.submit '更新', class: "px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300" %>
+      </div>
+    </div>
+<% end %>
+</div>
