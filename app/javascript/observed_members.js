@@ -160,7 +160,7 @@ window.onClickObservedMemberCheckBox = function onClickObservedMemberCheckBox(ev
 }
 
 function onClickSubmitButton(observedChannelMembers) {
-  const hiddenInputEl = document.getElementById('observed_members_attributes')
+  const hiddenInputEl = document.getElementById('observed_members')
   hiddenInputEl.value = JSON.stringify(observedChannelMembers.getData())
 }
 
