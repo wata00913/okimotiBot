@@ -14,7 +14,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       flash[:alert] = 'Slackチャンネルの取得に失敗しました。'
     end
 
-    @observed_channel_ids = current_user.build_observed_members.map { |k, _| k.channel_id }
+    @observed_channel_ids = current_user.observed_channels.pluck(:channel_id)
     @slack_channels = SlackChannel.all
 
     super

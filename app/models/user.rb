@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :observed_members, dependent: :destroy
   has_many :channel_members, through: :observed_members
+  has_many :observed_channels, -> { distinct }, through: :channel_members, source: :slack_channel
 
   accepts_nested_attributes_for :observed_members, allow_destroy: true
 
