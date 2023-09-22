@@ -16,7 +16,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     @observed_channel_ids = current_user.observed_channels.pluck(:channel_id)
     @slack_channels = SlackChannel.all
-
+    @channels_reload_updated_at = l(Time.zone.now, format: :long)
     super
   end
 

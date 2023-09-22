@@ -35,7 +35,7 @@
                      onclick: 'onClickChannelsReloadButton()')
       %>
       <p>更新時間：</p>
-      <p id="channel-reload-updated-at"><%= l Time.zone.now, format: :long %></p>
+      <p id="channel-reload-updated-at"><%= @channels_reload_updated_at %></p>
     </div>
     <% observed_channel_ids = current_user.observed_members.map do |observed_member|
         observed_member.channel_member.slack_channel.channel_id
