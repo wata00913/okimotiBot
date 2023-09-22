@@ -5,18 +5,16 @@ class MessagesController < ApplicationController
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
   def index
+    set_messages
+
+    set_search_messages if params[:message]
+  end
+
+  def reload_messages
     collect_messages
+    set_messages
 
-    @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
-                       .order(slack_timestamp: :desc)
-                       .page(params[:page])
-
-    if params[:message]
-      set_search_messages
-    else
-      channel_member_ids = current_user.observed_members.pluck(:channel_member_id)
-      @messages = @messages.where(channel_member_id: channel_member_ids)
-    end
+    render :index
   end
 
   private
@@ -55,6 +53,13 @@ class MessagesController < ApplicationController
     return unless @search_params
 
     @search_params[:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
+  end
+
+  def set_messages
+    @messages = current_user.observed_members_messages
+                            .includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
+                            .order(slack_timestamp: :desc)
+                            .page(params[:page])
   end
 
   def collect_messages
