@@ -40,7 +40,7 @@ class MessagesController < ApplicationController
 
     flash['notice'] = '感情解析が完了しました。'
     render turbo_stream: [
-      turbo_stream.replace('messages') { |_| render_to_string partial: 'messages', locals: { messages: @messages } },
+      turbo_stream.replace('messages_index') { |_| render_to_string :index },
       turbo_stream.update('notice-or-alert-message', partial: 'layouts/flash')
     ]
   end
