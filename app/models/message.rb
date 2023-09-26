@@ -24,7 +24,7 @@ class Message < ApplicationRecord
   scope :channel_messages, ->(channel) { where(channel_member_id: channel.channel_member_ids) }
   scope :analyzed, -> { joins(:sentiment_score) }
   scope :unanalyzed, -> { left_outer_joins(:sentiment_score).where(sentiment_score: { id: nil }) }
-  scope :analysis_target, -> { unanalyzed.order(:slack_timestamp).take(MAX_ANALYSES) }
+  scope :analysis_target, -> { unanalyzed.order(slack_timestamp: :desc).take(MAX_ANALYSES) }
 
   class << self
     def latest_slack_timestamp
