@@ -35,7 +35,7 @@ class Message < ApplicationRecord
       messages.map { |m| m.attributes.symbolize_keys }
     end
 
-    def create_sentiment_analysis(messages_response)
+    def create_sentiment_scores(messages_response)
       messages_response['success'].each do |message_response|
         message = find(message_response['id'])
         message.create_sentiment_score!(message_response.slice('positive', 'negative', 'neutral', 'mixed'))

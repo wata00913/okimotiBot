@@ -4,8 +4,6 @@ class MessagesController < ApplicationController
   before_action :require_sign_in
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
-  MAX_ANALYSES = 5
-
   def index
     set_messages
 
@@ -31,7 +29,7 @@ class MessagesController < ApplicationController
   end
 
   def reload_sentiment_analysis
-    analyze_sentiment
+    analyze_messages_sentiment
 
     @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
                        .where(channel_member_id: current_user.channel_member_ids)
@@ -96,10 +94,9 @@ class MessagesController < ApplicationController
     end
   end
 
-  def analyze_sentiment
-    unanalyzed_messages = Message.unanalyzed.order(:slack_timestamp).take(MAX_ANALYSES)
-    unanalyzed_messages_request = Message.build_messages(unanalyzed_messages)
-    response = aws_comprehend_client.analyze_sentiment(unanalyzed_messages_request)
-    Message.create_sentiment_analysis(response)
+  def analyze_messages_sentiment
+    request = Message.build_messages(Message.analysis_target)
+    response = client.analyze_sentiment(request)
+    Message.create_sentiment_scores(response)
   end
 end
