@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'slack_client'
+require 'aws_comprehend_client'
 
 class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -31,5 +32,9 @@ class ApplicationController < ActionController::Base
 
   def slack_client
     @slack_client ||= SlackClient.new
+  end
+
+  def aws_comprehend_client
+    @aws_comprehend_client ||= AwsComprehendClient.new
   end
 end
