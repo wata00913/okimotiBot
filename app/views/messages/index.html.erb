@@ -13,20 +13,7 @@
         <% if @messages.empty? %>
           <p class="text-center">投稿メッセージが存在しません。</p>
         <% else %>
-          <%= turbo_frame_tag 'messages' do %>
-            <div class="mb-4">
-              <%= link_to '感情解析',
-                  create_sentiment_analysis_path,
-                  class: 'px-3 py-2 h-6 mr-4 bg-blue-500 text-xs text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'
-              %>
-            </div>
-            <div class="flex flex-col gap-y-3">
-              <%= render partial: 'message', collection: @messages %>
-            </div>
-            <div class="flex justify-center my-8">
-              <%= paginate @messages, params: { action: 'index' } %>
-            </div>
-          <% end %>
+          <%= render partial: 'messages', locals: { messages: @messages } %>
         <% end %>
       <% end %>
     </div>

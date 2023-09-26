@@ -36,7 +36,11 @@ class MessagesController < ApplicationController
                        .order(slack_timestamp: :desc)
                        .page(params[:page])
 
-    render :index
+    flash['notice'] = '感情解析が完了しました。'
+    render turbo_stream: [
+      turbo_stream.replace('messages') { |_| render_to_string partial: 'messages', locals: { messages: @messages } },
+      turbo_stream.update('notice-or-alert-message', partial: 'layouts/flash')
+    ]
   end
 
   private
