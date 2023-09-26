@@ -37,4 +37,8 @@ class ApplicationController < ActionController::Base
   def aws_comprehend_client
     @aws_comprehend_client ||= AwsComprehendClient.new
   end
+
+  def write_log(e)
+    Rails.logger.error e.full_message.chomp
+  end
 end

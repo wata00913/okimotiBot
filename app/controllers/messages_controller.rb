@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MessagesController < ApplicationController
+  include AwsApiErrorHandler
+
   before_action :require_sign_in
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
@@ -100,7 +102,7 @@ class MessagesController < ApplicationController
 
   def analyze_messages_sentiment
     request = Message.build_messages(Message.analysis_target)
-    response = client.analyze_sentiment(request)
+    response = aws_comprehend_client.analyze_sentiment(request)
     Message.create_sentiment_scores(response)
   end
 end
