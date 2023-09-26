@@ -20,10 +20,23 @@ class Message < ApplicationRecord
                            .where('sentiment_scores.neutral > sentiment_scores.negative
                                    and sentiment_scores.neutral > sentiment_scores.positive') }
   scope :channel_messages, ->(channel) { where(channel_member_id: channel.channel_member_ids) }
+  scope :analyzed, -> { joins(:sentiment_score) }
+  scope :unanalyzed, -> { left_outer_joins(:sentiment_score).where(sentiment_score: { id: nil }) }
 
   class << self
     def latest_slack_timestamp
       maximum(:slack_timestamp)
+    end
+
+    def build_messages(messages)
+      messages.map { |m| m.attributes.symbolize_keys }
+    end
+
+    def create_sentiment_analysis(messages_response)
+      messages_response['success'].each do |message_response|
+        message = find(message_response['id'])
+        message.create_sentiment_score!(message_response.slice('positive', 'negative', 'neutral', 'mixed'))
+      end
     end
   end
 
