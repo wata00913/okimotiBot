@@ -28,7 +28,7 @@ class MessagesController < ApplicationController
     render :index
   end
 
-  def reload_sentiment_analysis
+  def create_sentiment_analysis
     analyze_messages_sentiment
 
     @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
