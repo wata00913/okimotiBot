@@ -1,0 +1,42 @@
+<%= form_with scope: :message, url: messages_path, method: :get, class: 'px-3 py-3' do |f| %>
+  <div id="select-observed-members" class="pb-4">
+    <p>監視対象ユーザー</p>
+    <%= hidden_field_tag :selected_observed_member_ids %>
+    <div id="observed-members" class="flex flex-wrap gap-x-3">
+      <% current_user.build_observed_members.each do |channel, observed_members| %>
+        <div class="flex flex-col gap-y-1 m-1 p-1 border border-gray-400 rounded-lg">
+        <p class="font-semibold"><%= "\##{channel.name}" %></p>
+          <div class="flex items-center gap-x-2">
+            <% observed_members.each do |observed_member| %>
+              <%= check_box_tag("select-observed-member-#{observed_member.id}",
+                                observed_member.id,
+                                !!@search_params&.[](:selected_observed_member_ids)&.find { |id| id == observed_member.id },
+                                onclick: 'onClickSearchObservedMemberCheckBox(event)')
+              %>
+              <p><%= "#{observed_member.slack_account.name}" %></p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="flex items-center ml-2 gap-x-3">
+    <div>
+      <p>感情</p>
+      <%= f.select :best_emotion, SentimentScore::ICON_TYPE.invert, include_blank: true, selected: @search_params&.[](:best_emotion) %>
+    </div>
+    <div class="flex items-center gap-x-3">
+      <div>
+        <p>投稿日時：from</p>
+        <%# 初期値を設定する場合、f.datetime_fieldだとオブジェクトの属性が必須のため、datetime_field_tagを利用。 %>
+        <%# datetime_field_tagのname属性をFormBuiderオブジェクトのname属性の命名基準に合わせるためにf.field_nameで指定。 %>
+        <%= datetime_field_tag f.field_name(:start_at), @search_params&.[](:start_at) %>
+      </div>
+      <div>
+        <p>投稿日時：to</p>
+        <%= datetime_field_tag f.field_name(:end_at), @search_params&.[](:end_at) %>
+      </div>
+    </div>
+    <%= f.submit '検索', class: "px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300" %>
+  </div>
+<% end %>
