@@ -5,6 +5,7 @@ class SlackChannel < ApplicationRecord
 
   has_many :channel_members, dependent: :destroy
   has_many :accounts, through: :channel_members, source: :slack_account
+  has_many :channel_members_with_account, -> { includes(:slack_account) }, class_name: 'ChannelMember'
 
   validates :channel_id, presence: true, uniqueness: true
   validates :name, presence: true, uniqueness: true
@@ -46,5 +47,9 @@ class SlackChannel < ApplicationRecord
       member = SlackAccount.create_account(attr)
       accounts << member unless accounts.exists?(member.id)
     end
+  end
+
+  def channel_member_by_account_id(account_id)
+    channel_members_with_account.to_ary.find { |channel_member| channel_member.slack_account.account_id == account_id }
   end
 end

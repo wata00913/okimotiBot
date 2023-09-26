@@ -5,16 +5,22 @@ class MessagesController < ApplicationController
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
   def index
-    @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
-                       .order(slack_timestamp: :desc)
-                       .page(params[:page])
+    set_messages
 
     if params[:message]
       set_search_messages
     else
-      channel_member_ids = current_user.observed_members.pluck(:channel_member_id)
-      @messages = @messages.where(channel_member_id: channel_member_ids)
+      @messages = @messages.merge(current_user.observed_members_messages)
     end
+  end
+
+  def reload_messages
+    collect_messages
+    set_messages
+
+    @messages = @messages.merge(current_user.observed_members_messages)
+
+    render :index
   end
 
   private
@@ -33,11 +39,8 @@ class MessagesController < ApplicationController
     @messages = @messages.public_send("best_#{type}") if type.present?
   end
 
-  def set_search_messages_where_observed_members(ids)
-    return if ids.empty?
-
-    channel_member_ids = current_user.observed_members.where(id: ids)
-    @messages = @messages.where(channel_member_id: channel_member_ids)
+  def set_search_messages_where_observed_members(observed_member_ids)
+    @messages = @messages.merge(current_user.observed_members_messages(observed_member_ids))
   end
 
   def set_search_messages_during(start_at, end_at)
@@ -53,5 +56,24 @@ class MessagesController < ApplicationController
     return unless @search_params
 
     @search_params[:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
+  end
+
+  def set_messages
+    @messages = Message.all
+                       .includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
+                       .order(slack_timestamp: :desc)
+                       .page(params[:page])
+  end
+
+  def collect_messages
+    observed_members = current_user.build_observed_members
+
+    observed_members.each do |channel, members|
+      member_ids = members.map { |m| m.slack_account.account_id }
+      from = Message.channel_messages(channel).latest_slack_timestamp
+      messages_response = slack_client.fetch_channel_members_messages(channel.channel_id, member_ids, from:)
+
+      ChannelMember.create_messages(messages_response, channel)
+    end
   end
 end

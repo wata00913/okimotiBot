@@ -8,7 +8,7 @@
       <span class="text-gray-400 text-sm mr-2">#<%= message.channel_member.slack_channel.name %></span>
       <span class="text-sm"><%= l Time.zone.at(message.slack_timestamp), format: :long %></span>
     </div>
-    <span class="text-gray-700 break-all"><%= message.original_message %></span>
+    <span class="text-gray-700 break-all"><%= simple_format message.escape_original_message %></span>
   </div>
 
   <div class="col-span-1 border-l-4">

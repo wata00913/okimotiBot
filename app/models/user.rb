@@ -22,4 +22,13 @@ class User < ApplicationRecord
         result
       end
   end
+
+  def observed_members_messages(observed_member_ids = nil)
+    ids = if observed_member_ids.nil?
+            channel_member_ids
+          else
+            observed_members.where(id: observed_member_ids).pluck(:channel_member_id)
+          end
+    Message.all.where(channel_member_id: ids)
+  end
 end
