@@ -2,7 +2,12 @@
   <div class="bg-gray-100">
     <div class="container mx-auto px-3 py-3">
       <div class="mb-4 flex">
-        <%= render partial: 'message_sentiment_analysis' %>
+        <div class="flex flex-col w-1/2 gap-y-2">
+          <%= render partial: 'reload' %>
+        </div>
+        <div class="flex flex-col w-1/2 gap-y-2">
+          <%= render partial: 'message_sentiment_analysis' %>
+        </div>
       </div>
       <div class="mb-4 mx-1  border border-gray-400 rounded-lg">
         <div class="px-3 bg-blue-400 rounded-t-lg">
@@ -11,9 +16,6 @@
         <%= render partial: 'search_bar' %>
       </div>
       <%= turbo_frame_tag 'messages' do %>
-        <div class="mb-4">
-          <%= render partial: 'reload' %>
-        </div>
         <% if @messages.empty? %>
           <p class="text-center">投稿メッセージが存在しません。</p>
         <% else %>
