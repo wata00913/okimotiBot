@@ -8,10 +8,9 @@
         <p class="font-semibold"><%= "\##{channel.name}" %></p>
           <div class="flex items-center gap-x-2">
             <% observed_members.each do |observed_member| %>
-              <%= check_box_tag("select-observed-member-#{observed_member.id}",
+              <%= check_box_tag("selected_observed_members[]",
                                 observed_member.id,
-                                !!@search_params&.[](:selected_observed_member_ids)&.find { |id| id == observed_member.id },
-                                onclick: 'onClickSearchObservedMemberCheckBox(event)')
+                                !!@search_params&.[](:selected_observed_member_ids)&.find { |id| id == observed_member.id })
               %>
               <p><%= "#{observed_member.slack_account.name}" %></p>
             <% end %>

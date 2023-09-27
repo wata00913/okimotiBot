@@ -55,7 +55,8 @@ class MessagesController < ApplicationController
   def set_selected_observed_member_ids_param
     return unless @search_params
 
-    @search_params[:selected_observed_member_ids] = JSON.parse(params[:selected_observed_member_ids]).map(&:to_i)
+    param = params[:selected_observed_members].blank? ? [] : params[:selected_observed_members].map(&:to_i)
+    @search_params[:selected_observed_member_ids] = param
   end
 
   def set_messages
