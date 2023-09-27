@@ -27,8 +27,8 @@ class Message < ApplicationRecord
   scope :analysis_target, -> { unanalyzed.order(slack_timestamp: :desc).take(MAX_ANALYSES) }
 
   class << self
-    def latest_slack_timestamp
-      maximum(:slack_timestamp)
+    def latest_slack_timestamp(messages = nil)
+      messages.nil? ? maximum(:slack_timestamp) : messages.maximum(:slack_timestamp)
     end
 
     def build_messages(messages)
