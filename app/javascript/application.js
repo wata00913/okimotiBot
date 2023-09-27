@@ -2,4 +2,3 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "./observed_members"
-import "./search_bar"
