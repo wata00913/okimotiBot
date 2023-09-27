@@ -11,6 +11,11 @@ class MessagesController < ApplicationController
       set_search_messages
     else
       @messages = @messages.merge(current_user.observed_members_messages)
+
+      # 絞り込みがない場合は、検索フォームの全監視ユーザーにチェックをONの状態にしておく
+      # チェックをONにするために@search_paramsにデータを設定する必要がある
+      @search_params = {}
+      @search_params[:selected_observed_member_ids] = current_user.observed_member_ids
     end
   end
 
