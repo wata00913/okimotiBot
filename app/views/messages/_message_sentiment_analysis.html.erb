@@ -1,0 +1,7 @@
+<%= link_to '感情解析の開始',
+    create_sentiment_analysis_path,
+    class: 'flex items-center justify-center w-full px-3 py-4 h-6 bg-blue-500 text-lg text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'
+%>
+<div class="flex justify-center">
+  <p>未解析のメッセージ数：<%= unanalyzed_messages_num %> </p>
+</div>

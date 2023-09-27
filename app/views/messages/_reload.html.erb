@@ -1,4 +1,12 @@
-<%= link_to 'メッセージ再読み込み',
+<%= link_to 'メッセージの取得',
     reload_messages_path,
-    class: 'px-3 py-2 h-6 mr-4 bg-blue-500 text-xs text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'
+    class: 'flex items-center justify-center w-full px-3 py-4 h-6 mr-4 bg-blue-500 text-lg text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300'
 %>
+<div class="flex flex-col items-center">
+  <% if @messages.empty? %>
+    <p>未取得</p>
+  <% else %>
+    <p>最終取得日時</p>
+    <p><%= latest_message_time(@messages) %> </p>
+  <% end %>
+</div>

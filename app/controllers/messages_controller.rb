@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class MessagesController < ApplicationController
+  include AwsApiErrorHandler
+
   before_action :require_sign_in
   before_action :set_search_params, :set_selected_observed_member_ids_param, only: :index
 
@@ -26,6 +28,21 @@ class MessagesController < ApplicationController
     @messages = @messages.merge(current_user.observed_members_messages)
 
     render :index
+  end
+
+  def create_sentiment_analysis
+    analyze_messages_sentiment
+
+    @messages = Message.includes(:sentiment_score, channel_member: %i[slack_channel slack_account])
+                       .where(channel_member_id: current_user.channel_member_ids)
+                       .order(slack_timestamp: :desc)
+                       .page(params[:page])
+
+    flash['notice'] = '感情解析が完了しました。'
+    render turbo_stream: [
+      turbo_stream.replace('messages_index') { |_| render_to_string :index },
+      turbo_stream.update('notice-or-alert-message', partial: 'layouts/flash')
+    ]
   end
 
   private
@@ -81,5 +98,11 @@ class MessagesController < ApplicationController
 
       ChannelMember.create_messages(messages_response, channel)
     end
+  end
+
+  def analyze_messages_sentiment
+    request = Message.build_messages(Message.analysis_target)
+    response = aws_comprehend_client.analyze_sentiment(request)
+    Message.create_sentiment_scores(response)
   end
 end

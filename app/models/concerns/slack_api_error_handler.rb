@@ -33,8 +33,4 @@ module SlackApiErrorHandler
     write_log(e)
     render json: { error: 'Slackユーザーが見つかりませんでした。' }, status: :bad_request
   end
-
-  def write_log(e)
-    Rails.logger.error e.full_message.chomp
-  end
 end

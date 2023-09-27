@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   get 'messages', to: 'messages#index'
   get 'reload_messages', to: 'messages#reload_messages'
+  get 'create_sentiment_analysis', to: 'messages#create_sentiment_analysis'
   root to: 'messages#index'
   devise_for :users, only: %i[registrations sessions], controllers: { registrations: 'users/registrations' }
 
